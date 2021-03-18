@@ -3,7 +3,8 @@ import React from 'react';
 const WIDTH = 1000
 
 function TypingCanvas({ text, onComplete }) {
-  const [typed, setTyped] = React.useState('')
+  const [typed, setTyped] = React.useState('');
+  const [stats, statsDispatch] = React.useReducer(statsReducer, statsInit());
 
   React.useEffect(() => {
     if (doneTyping(typed, text)) {
@@ -11,8 +12,16 @@ function TypingCanvas({ text, onComplete }) {
       setTyped('');
     }
   }, [typed, text, onComplete])
+
+  React.useEffect(() => {
+    const intervalId = setInterval(() => {
+      statsDispatch({ type: 'interval', delta: 1 });
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
   
   function onType(e) {
+    statsDispatch({ type: 'typing' });
     setTyped(e.target.value)
   }
   
@@ -40,6 +49,7 @@ function TypingCanvas({ text, onComplete }) {
   return (
     <>
     <input value={typed} onChange={onType}/>
+    <p>{stats.wpm}</p>
     <svg width={WIDTH} height="600">
       <text fontFamily="monospace" fontSize="24" y="100">
         {renderText()}
@@ -93,4 +103,28 @@ function doneTyping(typed, text) {
   const lastTyped = typedWords.pop();
   const lastWord = allWords.pop();
   return lastTyped === lastWord;
+}
+
+function statsInit() {
+  return {
+    count: 0, prevCount: 0, wpm: 0
+  }
+}
+
+function statsReducer(state, action) {
+  switch(action.type) {
+    case 'typing':
+      return {
+        ...state,
+        count: state.count + 1,
+      }
+    case 'interval':
+      const k = action.delta / 60 * 5; //transform to wpm
+      return {
+        ...state,
+        prevCount: state.count,
+        wpm: (state.count - state.prevCount) / k
+      }
+    default: return state;
+  }
 }

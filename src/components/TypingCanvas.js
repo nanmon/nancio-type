@@ -1,7 +1,17 @@
 import React from 'react';
 
-function TypingCanvas({ text }) {
+const WIDTH = 1000
+
+function TypingCanvas({ text, onComplete }) {
+  const [wordIndex, setWordIndex] = React.useState(0);
   const [typed, setTyped] = React.useState('')
+
+  React.useEffect(() => {
+    if (typed === text) {
+      onComplete();
+      setTyped('');
+    }
+  }, [typed, text, onComplete])
   
   function onType(e) {
     setTyped(e.target.value)
@@ -32,11 +42,15 @@ function TypingCanvas({ text }) {
   
   function renderText() {
     const typedWords = typed.split(' ').filter(w => w);
+    let line = []
     const renderedWords = text.split(' ').map((word, index) => {
+      line.push(word);
+      const width = getTextWidth(line.join(' '));
       const props = {};
-      if (index % 5 === 0) {
+      if (width > WIDTH - 100) {
         props.x = '0';
         props.dy="1.2em"
+        line = [];
       }
       return <tspan {...props}>{renderWord(typedWords[index], word)}</tspan>;
     });
@@ -46,7 +60,7 @@ function TypingCanvas({ text }) {
   return (
     <>
     <input value={typed} onChange={onType}/>
-    <svg width="500" height="600">
+    <svg width={WIDTH} height="600">
       <text fontFamily="monospace" fontSize="24" y="100">
         {renderText()}
       </text>
@@ -61,4 +75,11 @@ function fillBetween(array, fn) {
   const newArray = array.map(item => [item, fn(item)]).flat();
   newArray.pop();
   return newArray;
+}
+
+function getTextWidth(text, font = "500 24px monospace") {
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  context.font = font;
+  return context.measureText(text).width;
 }

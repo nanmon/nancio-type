@@ -2,28 +2,68 @@ import React from 'react';
 
 function TypingText({ typed, text, maxWidth, onType }) {
   const typedWords = typed.split(' ').filter(w => w);
-  let line = []
-  const renderedWords = text.split(' ').map((word, index) => {
-    line.push(word);
-    const width = getTextWidth(line.join(' '));
-    const props = {};
-    if (width > maxWidth - 150) {
-      props.x = '0';
-      props.dy="1.2em"
-      line = [];
+  const allWords = text.split(' ');
+  
+  function drawWords() {
+    let line = []
+    const renderedWords = allWords.map((word, index) => {
+      line.push(word);
+      const width = getTextWidth(line.join(' '));
+      if (index === typedWords.length - 1) 
+        console.log(line, width);
+      const props = {};
+      if (width > maxWidth) {
+        props.x = '0';
+        props.dy = "24"
+        line = [word];
+      }
+      return (
+        <tspan {...props}>
+          <Word key={index} typed={typedWords[index]} word={word}/>
+        </tspan>
+      );
+    });
+    return fillBetween(renderedWords, () => <tspan>{" "}</tspan>);
+  }
+
+  function drawCaret() {
+    let y = 100;
+    let line = [];
+    let width = 0; // will stay with last line width
+    if (typedWords.length > 0) {
+      allWords.slice(0, typedWords.length - 1)
+      // .concat(typedWords.slice(typedWords.length - 1))
+        .forEach(word => {
+          line.push(word)
+          width = getTextWidth(line.join(' '));
+          if (width > maxWidth) {
+            y += 24;
+            line = [word];
+          }
+        });
+
+      const lastTypedWord = typedWords[typedWords.length - 1];
+      const lastTypedCompleteWord = allWords[typedWords.length - 1];
+
+      const widthWithWholeWord = getTextWidth([...line, lastTypedCompleteWord].join(' '));
+
+      if (widthWithWholeWord > maxWidth) {
+        y += 24;
+        line = []
+      }
+      line.push(lastTypedWord);
+      width = getTextWidth(line.join(' ') + (typed.endsWith(' ') ? ' ' : ''));
     }
-    return (
-            <tspan {...props}>
-              <Word key={index} typed={typedWords[index]} word={word}/>
-            </tspan>
-    );
-  });
+    return <tspan y={y} x={width - 5} fill="cyan">|</tspan>
+  }
+
   return (
     <>
       <input value={typed} onChange={onType}/>
       <svg width={maxWidth} height="600">
         <text fontFamily="monospace" fontSize="24" y="100">
-          {fillBetween(renderedWords, () => <tspan>{" "}</tspan>)}
+          {drawWords()}
+          {drawCaret()}
         </text>
       </svg>
     </>
@@ -66,3 +106,5 @@ function getTextWidth(text, font = "500 24px monospace") {
   context.font = font;
   return context.measureText(text).width;
 }
+
+const log = o => console.log(o) || o;

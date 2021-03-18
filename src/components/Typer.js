@@ -48,7 +48,7 @@ function Typer() {
         : <TypingText 
             typed={typed} 
             text={text} 
-            maxWidth={WIDTH - 150}
+            maxWidth={WIDTH}
             onType={onType}
           />
       }

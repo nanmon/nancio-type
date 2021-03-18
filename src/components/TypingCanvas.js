@@ -3,11 +3,10 @@ import React from 'react';
 const WIDTH = 1000
 
 function TypingCanvas({ text, onComplete }) {
-  const [wordIndex, setWordIndex] = React.useState(0);
   const [typed, setTyped] = React.useState('')
 
   React.useEffect(() => {
-    if (typed === text) {
+    if (doneTyping(typed, text)) {
       onComplete();
       setTyped('');
     }
@@ -82,4 +81,14 @@ function getTextWidth(text, font = "500 24px monospace") {
   const context = canvas.getContext("2d");
   context.font = font;
   return context.measureText(text).width;
+}
+
+function doneTyping(typed, text) {
+  const typedWords = typed.split(' ').filter(w => w);
+  const allWords = text.split(' ');
+  if (typedWords.length < allWords.length) return false;
+  if (typed.endsWith(' ')) return true;
+  const lastTyped = typedWords.pop();
+  const lastWord = allWords.pop();
+  return lastTyped === lastWord;
 }

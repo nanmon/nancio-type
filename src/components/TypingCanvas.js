@@ -16,29 +16,6 @@ function TypingCanvas({ text, onComplete }) {
     setTyped(e.target.value)
   }
   
-  function renderChar(typed, char) {
-    let color;
-    if (!typed) color = 'grey';
-    else if (typed === char) color = 'white';
-    else color = 'red';
-    return <tspan fill={color}>{char}</tspan>;
-  }
-
-  function renderWord(typed = '', word) {
-    let chars = word.split('');
-    let rendered = [];
-    chars.forEach((char, index) => {
-      rendered.push(renderChar(typed[index], char));
-    }, '')
-    if (typed.length > word.length) {
-      chars = typed.substr(word.length).split('');
-      chars.forEach(char => {
-        rendered.push(<tspan fill="darkred">{char}</tspan>);
-      })
-    }
-    return rendered;
-  }
-  
   function renderText() {
     const typedWords = typed.split(' ').filter(w => w);
     let line = []
@@ -46,12 +23,16 @@ function TypingCanvas({ text, onComplete }) {
       line.push(word);
       const width = getTextWidth(line.join(' '));
       const props = {};
-      if (width > WIDTH - 100) {
+      if (width > WIDTH - 200) {
         props.x = '0';
         props.dy="1.2em"
         line = [];
       }
-      return <tspan {...props}>{renderWord(typedWords[index], word)}</tspan>;
+      return (
+        <tspan {...props}>
+          <Word key={index} typed={typedWords[index]} word={word}/>
+        </tspan>
+      );
     });
     return fillBetween(renderedWords, () => <tspan>{" "}</tspan>);
   }
@@ -69,6 +50,27 @@ function TypingCanvas({ text, onComplete }) {
 }
 
 export default TypingCanvas;
+
+function Word({ typed = '', word }) {
+
+  let chars = word.split('');
+  let rendered = [];
+  chars.forEach((char, index) => {
+    const typedChar = typed[index];
+    let color;
+    if (!typedChar) color = 'grey';
+    else if (typedChar === char) color = 'white';
+    else color = 'red';
+    rendered.push(<tspan key={index} fill={color}>{char}</tspan>);
+  })
+  if (typed.length > word.length) {
+    chars = typed.substr(word.length).split('');
+    chars.forEach(char => {
+      rendered.push(<tspan fill="darkred">{char}</tspan>);
+    })
+  }
+  return rendered;
+}
 
 function fillBetween(array, fn) {
   const newArray = array.map(item => [item, fn(item)]).flat();

@@ -52,7 +52,6 @@ function Typer() {
             onType={onType}
           />
       }
-      <p>errors: {stats.errors}</p>
       <button onClick={onNext}>Next</button>
     </>
   );
@@ -65,6 +64,7 @@ function Stats({ stats, onNext }) {
     <>
       <p>Avg: {avg(stats.wpm)} wpm</p>
       <p>Time: {stats.wpm.length}s </p>
+      <p>Errors: {stats.errors}</p>
     </>
   )
 }
@@ -127,5 +127,5 @@ function didErr({ typed, text }) {
   const wordsTyped = typed.split(' ');
   const lastWord = wordsTyped[wordsTyped.length - 1];
   const actualWord = text.split(' ')[wordsTyped.length - 1];
-  return actualWord[lastWord.length - 1] !== lastWord[lastWord.length - 1];
+  return actualWord && actualWord[lastWord.length - 1] !== lastWord[lastWord.length - 1];
 }

@@ -3,14 +3,19 @@ import React from 'react';
 function TypingText({ typed, text, maxWidth, onType }) {
   const typedWords = typed.split(' ').filter(w => w);
   const allWords = text.split(' ');
+
+  const inputRef = React.useRef();
+  const [inputHasFocus, setInputFocus] = React.useState(false);
+
+  React.useEffect(() => {
+    inputRef.current.focus();
+  }, []);
   
   function drawWords() {
     let line = []
     const renderedWords = allWords.map((word, index) => {
       line.push(word);
       const width = getTextWidth(line.join(' '));
-      if (index === typedWords.length - 1) 
-        console.log(line, width);
       const props = {};
       if (width > maxWidth) {
         props.x = '0';
@@ -27,7 +32,7 @@ function TypingText({ typed, text, maxWidth, onType }) {
   }
 
   function drawCaret() {
-    let y = 100;
+    let y = 24;
     let line = [];
     let width = 0; // will stay with last line width
     if (typedWords.length > 0) {
@@ -54,17 +59,33 @@ function TypingText({ typed, text, maxWidth, onType }) {
       line.push(lastTypedWord);
       width = getTextWidth(line.join(' ') + (typed.endsWith(' ') ? ' ' : ''));
     }
-    return <tspan y={y} x={width - 5} fill="cyan">|</tspan>
+    return (
+      <text 
+        className="caret" 
+        fontFamily="monospace" 
+        fontSize="24" 
+        transform={`translate(${width}, ${y})`}
+      >
+        <tspan y="0" x={-6}  fill="cyan">|</tspan>
+      </text>
+    );
   }
 
   return (
     <>
-      <input value={typed} onChange={onType}/>
-      <svg width={maxWidth} height="600">
-        <text fontFamily="monospace" fontSize="24" y="100">
+      <input 
+        ref={inputRef}
+        value={typed} 
+        onChange={onType} 
+        style={{height: 0, padding: 0, border: 0}}
+        onFocus={() => setInputFocus(true)}
+        onBlur={() => setInputFocus(false)}
+      />
+      <svg width={maxWidth} height="600" onClick={() => inputRef.current.focus()}>
+        <text fontFamily="monospace" fontSize="24" y="24">
           {drawWords()}
-          {drawCaret()}
         </text>
+        {inputHasFocus && drawCaret()}
       </svg>
     </>
   )

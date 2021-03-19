@@ -1,16 +1,18 @@
 import React from 'react';
 import { clamp, fillBetween, tuplify } from '../util/std';
 import { chars, extra, getTextWidth, words } from '../util/text'
+import { useTyper } from '../util/state'
 
-function TypingText({ typed, text, maxWidth, onType }) {
-  const meta = metadata(text, typed, maxWidth);
+function TypingText({ onType }) {
+  const { content, typed, config } = useTyper();
+  const meta = metadata(content.text, typed, config);
 
   const inputRef = React.useRef();
   const [inputHasFocus, setInputFocus] = React.useState(false);
 
   React.useEffect(() => {
     inputRef.current.focus();
-  }, [text]);
+  }, [content.text]);
 
   function onKeyPress(e) {
     const prevent = onType(e);
@@ -19,8 +21,8 @@ function TypingText({ typed, text, maxWidth, onType }) {
 
   const textY = React.useMemo(() => {
     const clamper = clamp(-1e20, 0);
-    return clamper(-meta.caret.line * 24 + 24);
-  }, [meta]);
+    return clamper(-(meta.caret.line - 1) * config.fontSize);
+  }, [config, meta]);
 
   return (
     <>
@@ -31,9 +33,9 @@ function TypingText({ typed, text, maxWidth, onType }) {
         onFocus={() => setInputFocus(true)}
         onBlur={() => setInputFocus(false)}
       />
-      <svg width={maxWidth} height="78" onClick={() => inputRef.current.focus()}>
-        <text fontFamily="monospace" fontSize="24" y={textY}>
-          {meta.lines.map((line, index) => <Line key={index} {...line}/>)}
+      <svg width={config.width} height={config.fontSize * 3.25} onClick={() => inputRef.current.focus()}>
+        <text fontFamily={config.font} fontSize={config.fontSize} y={textY}>
+          {meta.lines.map((line, index) => <Line key={index} fontSize={config.fontSize} {...line}/>)}
         </text>
         {inputHasFocus && <Caret {...meta.caret}/>}
       </svg>
@@ -44,9 +46,9 @@ function TypingText({ typed, text, maxWidth, onType }) {
 export default TypingText;
 
 const addSpaces = fillBetween(() => <tspan>{" "}</tspan>);
-function Line({ words }) {
+function Line({ words, fontSize }) {
   return (
-    <tspan className="line" dy={24} x={0}>
+    <tspan className="line" dy={fontSize} x={0}>
       {addSpaces(
         words.map((word, index) => <Word key={index} {...word}/>),
       )}
@@ -63,30 +65,27 @@ function Word({ chars }) {
   );
 }
 
-const CHAR_COLORS = {
-  left: 'gray',
-  correct: 'white',
-  wrong: 'red',
-  extra: 'darkred'
-}
 function Char({ code, str }) {
-  const color = CHAR_COLORS[code]
+  const { config } = useTyper()
+  const color = config.colors[code]
   return (
     <tspan className="Char" fill={color}>{str}</tspan>
   );
 }
 
 function Caret({ line, x }) {
+  const { config } = useTyper();
+
   const y = React.useMemo(() => {
-    const clamper = clamp(24, 48);
-    return clamper((line + 1) * 24);
-  }, [line]);
+    const clamper = clamp(config.fontSize, config.fontSize * 2);
+    return clamper((line + 1) * config.fontSize);
+  }, [line, config]);
 
   return (
     <text 
       className="caret" 
-      fontFamily="monospace" 
-      fontSize="24" 
+      fontFamily={config.font}
+      fontSize={config.fontSize} 
       transform={`translate(${x}, ${y})`}
     >
       <tspan y="0" x={-6} fill="cyan">|</tspan>
@@ -94,7 +93,7 @@ function Caret({ line, x }) {
   );
 }
 
-function metadata(text, typed, maxWidth) {
+function metadata(text, typed, config) {
   const lines = [];
   let currentLine = [];
   let caret = { line: 0, x: 0 };
@@ -106,8 +105,8 @@ function metadata(text, typed, maxWidth) {
     const wordMeta = wordMetadata(woriginal, wtyped);
     currentLine.push(wordMeta);
     const lineStr = currentLine.map(w => w.str).join(' ');
-    const width = getTextWidth(lineStr);
-    if (width > maxWidth) {
+    const width = getTextWidth(lineStr, config);
+    if (width > config.width) {
       currentLine.pop();
       lines.push({
         words: currentLine,
@@ -118,7 +117,7 @@ function metadata(text, typed, maxWidth) {
 
     if (wtyped && !nextWtyped) 
       caret = {
-        x: caretMetadata(wtyped, currentLine, typed.endsWith(' ')),
+        x: caretMetadata(wtyped, currentLine, config, typed.endsWith(' ')),
         line: lines.length
       }
   });
@@ -147,11 +146,11 @@ function wordMetadata(woriginal, wtyped) {
   return { str: woriginal + extraStr, chars: charsMeta };
 }
 
-function caretMetadata(wtyped, currentLine, endsWithSpace) {
+function caretMetadata(wtyped, currentLine, config, endsWithSpace) {
   const lineUntilCaret = currentLine.slice(0, currentLine.length - 1);
   let lineStr = lineUntilCaret.map(w => w.str).join(' ');
   if (lineStr) lineStr += ' ';
   lineStr += wtyped;
   if (endsWithSpace) lineStr += ' ';
-  return getTextWidth(lineStr);
+  return getTextWidth(lineStr, config);
 }

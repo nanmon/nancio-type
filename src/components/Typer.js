@@ -2,13 +2,11 @@
 import React from 'react';
 import TypingText from './TypingText';
 import Stats from './Stats';
-import { useTyper } from '../util/state';
-const { quotes } = require('../quotes.json')
+import { useTyper, useTyperDispatch } from '../util/state';
 
-const WIDTH = 1000;
+function Typer({ nextContent }) {
 
-function Typer() {
-  const [state, dispatch] = useTyper(randomQuote);
+  const [state, dispatch] = [useTyper(), useTyperDispatch()];
 
   React.useEffect(() => {
     if (state.screen === 'typing' &&  doneTyping(state)) {
@@ -34,17 +32,14 @@ function Typer() {
   }
 
   function onNext() {
-    dispatch({ type: 'restart', content: randomQuote() })
+    dispatch({ type: 'restart', content: nextContent() })
   }
 
   return (
     <>
       {state.screen === 'stats' 
         ? <Stats state={state} onNext={onNext}/>
-        : <TypingText 
-            typed={state.typed} 
-            text={state.content.text} 
-            maxWidth={WIDTH}
+        : <TypingText
             onType={onType}
           />
       }
@@ -63,9 +58,4 @@ function doneTyping({typed, content}) {
   const lastTyped = typedWords.pop();
   const lastWord = allWords.pop();
   return lastTyped === lastWord;
-}
-
-function randomQuote() {
-  const index = Math.floor(Math.random() * quotes.length);
-  return quotes[index]
 }

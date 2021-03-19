@@ -1,7 +1,25 @@
 import React from 'react';
 
-export function useTyper(firstContent) {
-  return React.useReducer(reducer, null, () => init(firstContent()))
+const StateContext = React.createContext();
+const DispatchContext = React.createContext();
+
+export function TyperProvider({ firstContent, children }) {
+  const [state, dispatch] = React.useReducer(reducer, null, () => init(firstContent()));
+  return (
+    <DispatchContext.Provider value={dispatch}>
+      <StateContext.Provider value={state}>
+        {children}
+      </StateContext.Provider>
+    </DispatchContext.Provider>
+  );
+}
+
+export function useTyper() {
+  return React.useContext(StateContext);
+}
+
+export function useTyperDispatch() {
+  return React.useContext(DispatchContext);
 }
 
 function init(content = {text: ''}) {
@@ -11,6 +29,17 @@ function init(content = {text: ''}) {
     screen: 'typing',
     stats: {
       count: 0, prevCount: 0, wpm: [], errors: 0
+    },
+    config: {
+      font: 'monospace',
+      fontSize: 24, 
+      width: 800, 
+      colors: {
+        left: 'gray',
+        correct: 'white',
+        wrong: 'red',
+        extra: 'darkred'
+      }
     }
   }
 }

@@ -12,9 +12,9 @@ export const extra = text => (typed = '') => {
   return '';
 }
 
-export const getTextWidth = (text, font = "500 24px monospace") => {
+export const getTextWidth = (text, {font, fontSize}) => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
-  context.font = font;
+  context.font = `${fontSize}px ${font}`;
   return context.measureText(text).width;
 }

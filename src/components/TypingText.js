@@ -1,6 +1,6 @@
 import React from 'react';
 import { clamp, fillBetween, last, tuplify } from '../util/std';
-import { chars, extra, getTextWidth, words } from '../util/text'
+import { chars, extra, getTextWidth, withExtra, words } from '../util/text'
 import { useTyper } from '../util/state'
 
 function TypingText({ onType }) {
@@ -66,13 +66,18 @@ function TypingText({ onType }) {
       // completed this line but not started the next one
       if (typed.endsWith(' ')) return { line: index + 1, x: 0}
     }
-    let textUntilCaret = textWords
-      .slice(0, typedWords.length - 1)
-      .join(' ');
+    let textUntilCaret = withExtra(
+      textWords.slice(0, typedWords.length - 1).join(' '), 
+      typedWords.slice(0, typedWords.length - 1).join(' ')
+    );
+    debugger;
     if (textUntilCaret) textUntilCaret += ' ';
-    if (typed.endsWith(' ')) 
-      textUntilCaret += textWords[typedWords.length - 1] + ' ';
-    else textUntilCaret += last(typedWords);
+    if (typed.endsWith(' ')) {
+      const wtext = textWords[typedWords.length - 1];
+      textUntilCaret += wtext
+        + extra(wtext)(last(typedWords))
+        + ' ';
+    } else textUntilCaret += last(typedWords);
     return { line: index, x: getTextWidth(textUntilCaret, config) };
   }, [lines, config, typed]);
 

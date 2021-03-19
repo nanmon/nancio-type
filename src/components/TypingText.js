@@ -1,11 +1,10 @@
 import React from 'react';
-import { clamp, fillBetween, tuplify } from '../util/std';
+import { clamp, fillBetween, last, tuplify } from '../util/std';
 import { chars, extra, getTextWidth, words } from '../util/text'
 import { useTyper } from '../util/state'
 
 function TypingText({ onType }) {
   const { content, typed, config } = useTyper();
-  const meta = metadata(content.text, typed, config);
 
   const inputRef = React.useRef();
   const [inputHasFocus, setInputFocus] = React.useState(false);
@@ -14,6 +13,69 @@ function TypingText({ onType }) {
     inputRef.current.focus();
   }, [content.text]);
 
+  const lines = React.useMemo(() => {
+    function wordsToLineToken(wordTokens) {
+      return {
+        text: wordTokens.map(w => w.text).join(' '),
+        typed: wordTokens
+          .map(w => w.typed)
+          .filter(w => w)
+          .join(' '),
+      }
+    }
+
+    const lines = [];
+    let currentLine = [];
+    tuplify(
+      words(content.text),
+      words(typed),
+    ).forEach(([woriginal, wtyped]) => {
+      const wordToken = {
+        text: woriginal,
+        typed: wtyped,
+      }
+      currentLine.push(wordToken);
+      const lineStr = currentLine
+        .map(w => w.text + extra(w.text)(w.typed))
+        .join(' ');
+      const width = getTextWidth(lineStr, config);
+      if (width > config.width) {
+        currentLine.pop();
+        lines.push(wordsToLineToken(currentLine));
+        currentLine = [wordToken];
+      }
+    });
+    lines.push(wordsToLineToken(currentLine));
+    return lines;
+  }, [content.text, typed, config]);
+
+  const caret = React.useMemo(() => {
+    let index = lines.findIndex(line => !line.typed) - 1;
+    if (index === -1) {
+      // not started typing
+      return { line: 0, x: 0};
+    }
+    if (index === -2) {
+      // all lines have text
+      index = lines.length - 1;
+    }
+    const lastTypedLine = lines[index];
+    const typedWords = words(lastTypedLine.typed);
+    const textWords = words(lastTypedLine.text);
+    if (typedWords.length === textWords.length) {
+      // completed this line but not started the next one
+      if (typed.endsWith(' ')) return { line: index + 1, x: 0}
+    }
+    let textUntilCaret = textWords
+      .slice(0, typedWords.length - 1)
+      .join(' ');
+    if (textUntilCaret) textUntilCaret += ' ';
+    if (typed.endsWith(' ')) 
+      textUntilCaret += textWords[typedWords.length - 1] + ' ';
+    else textUntilCaret += last(typedWords);
+    return { line: index, x: getTextWidth(textUntilCaret, config) };
+  }, [lines, config, typed]);
+
   function onKeyPress(e) {
     const prevent = onType(e);
     if (prevent) e.preventDefault();
@@ -21,8 +83,9 @@ function TypingText({ onType }) {
 
   const textY = React.useMemo(() => {
     const clamper = clamp(-1e20, 0);
-    return clamper(-(meta.caret.line - 1) * config.fontSize);
-  }, [config, meta]);
+    const offset = config.lineHeight - config.fontSize;
+    return clamper(-(caret.line - 1) * config.lineHeight) - offset;
+  }, [config, caret]);
 
   return (
     <>
@@ -33,11 +96,11 @@ function TypingText({ onType }) {
         onFocus={() => setInputFocus(true)}
         onBlur={() => setInputFocus(false)}
       />
-      <svg width={config.width} height={config.fontSize * 3.25} onClick={() => inputRef.current.focus()}>
+      <svg width={config.width} height={config.lineHeight * 3} onClick={() => inputRef.current.focus()}>
         <text fontFamily={config.font} fontSize={config.fontSize} y={textY}>
-          {meta.lines.map((line, index) => <Line key={index} fontSize={config.fontSize} {...line}/>)}
+          {lines.map((line, index) => <Line key={index} lineHeight={config.lineHeight} {...line}/>)}
         </text>
-        {inputHasFocus && <Caret {...meta.caret}/>}
+        {inputHasFocus && <Caret {...caret}/>}
       </svg>
     </>
   )
@@ -46,111 +109,79 @@ function TypingText({ onType }) {
 export default TypingText;
 
 const addSpaces = fillBetween((_b, _a, index) => <tspan key={'space-'+index}>{" "}</tspan>);
-function Line({ words, fontSize }) {
+function Line({ text, typed, lineHeight }) {
+  const _words = tuplify(
+    words(text),
+    words(typed),
+  ).map(([text, typed]) => ({text, typed}));
   return (
-    <tspan className="line" dy={fontSize} x={0}>
+    <tspan className="line" dy={lineHeight} x={0}>
       {addSpaces(
-        words.map((word, index) => <Word key={index} {...word}/>),
+        _words.map((word, index) => <Word key={index} {...word}/>),
       )}
     </tspan>
   );
 }
 
 
-function Word({ chars }) {
+function Word({ text, typed }) {
+  const _chars = tuplify(
+    chars(text),
+    chars(typed)
+  ).map(([text, typed]) => ({ text, typed }));
+  const extraStr = extra(text)(typed);
+  chars(extraStr).forEach(char => {
+    _chars.push({ typed: char });
+  });
   return (
     <tspan className="Word">
-      {chars.map((char, index) => <Char key={index} {...char}/>)}
+      {_chars.map((char, index) => <Char key={index} {...char}/>)}
     </tspan>
   );
 }
 
-function Char({ code, str }) {
-  const { config } = useTyper()
-  const color = config.colors[code]
+function Char({ text, typed }) {
+  const { config } = useTyper();
+  const color = React.useMemo(() => {
+    let code;
+    if (!typed) code = 'left';
+    else if (!text) code = 'extra';
+    else if (typed === text) code = 'correct';
+    else code = 'wrong';
+    return config.colors[code]
+  }, [text, typed, config]);
+  const str = text || typed;
   return (
     <tspan className="Char" fill={color}>{str}</tspan>
   );
 }
 
 function Caret({ line, x }) {
-  const { config } = useTyper();
+  const { config, typed } = useTyper();
+  const [className, setClassName] = React.useState('caret');
+
+  React.useEffect(() => {
+    setClassName('caret');
+    const timeoutId = setTimeout(() => {
+      setClassName('caret animated');
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [typed]);
 
   const y = React.useMemo(() => {
-    const clamper = clamp(config.fontSize, config.fontSize * 2);
-    return clamper((line + 1) * config.fontSize);
+    const offset = config.lineHeight - config.fontSize;
+    const clamper = clamp(config.lineHeight, config.lineHeight * 2);
+    return clamper((line + 1) * config.lineHeight) - offset;
   }, [line, config]);
 
   return (
     <text 
-      className="caret" 
+      className={className}
       fontFamily={config.font}
       fontSize={config.fontSize} 
       transform={`translate(${x}, ${y})`}
     >
-      <tspan y="0" x={-6} fill="cyan">|</tspan>
+      <tspan y="0" x={-6} fill={config.colors.caret}>|</tspan>
     </text>
   );
-}
-
-function metadata(text, typed, config) {
-  const lines = [];
-  let currentLine = [];
-  let caret = { line: 0, x: 0 };
-  tuplify(
-    words(text),
-    words(typed),
-    words(typed).slice(1)
-  ).forEach(([woriginal, wtyped, nextWtyped]) => {
-    const wordMeta = wordMetadata(woriginal, wtyped);
-    currentLine.push(wordMeta);
-    const lineStr = currentLine.map(w => w.str).join(' ');
-    const width = getTextWidth(lineStr, config);
-    if (width > config.width) {
-      currentLine.pop();
-      lines.push({
-        words: currentLine,
-        str: currentLine.map(w => w.str).join(' ')
-      });
-      currentLine = [wordMeta];
-    }
-
-    if (wtyped && !nextWtyped) 
-      caret = {
-        x: caretMetadata(wtyped, currentLine, config, typed.endsWith(' ')),
-        line: lines.length
-      }
-  });
-  lines.push({
-    words: currentLine,
-    str: currentLine.map(w => w.str).join(' ')
-  });
-  return { lines, caret };
-}
-
-function wordMetadata(woriginal, wtyped) {
-  let charsMeta = tuplify(
-    chars(woriginal),
-    chars(wtyped)
-  ).map(([choriginal, chtyped]) => {
-    const charMeta = {str: choriginal};
-    if (!chtyped) charMeta.code = 'left';
-    else if (chtyped === choriginal) charMeta.code = 'correct';
-    else charMeta.code = 'wrong';
-    return charMeta
-  });
-  const extraStr = extra(woriginal)(wtyped);
-  chars(extraStr).forEach(char => {
-    charsMeta.push({ str: char, code: 'extra' });
-  });
-  return { str: woriginal + extraStr, chars: charsMeta };
-}
-
-function caretMetadata(wtyped, currentLine, config, endsWithSpace) {
-  const lineUntilCaret = currentLine.slice(0, currentLine.length - 1);
-  let lineStr = lineUntilCaret.map(w => w.str).join(' ');
-  if (lineStr) lineStr += ' ';
-  lineStr += wtyped;
-  if (endsWithSpace) lineStr += ' ';
-  return getTextWidth(lineStr, config);
-}
+} 

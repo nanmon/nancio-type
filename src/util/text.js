@@ -1,4 +1,4 @@
-export const words = (text) => {
+export const words = (text = '') => {
   return text.split(' ').filter(w => w);
 }
 

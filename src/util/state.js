@@ -32,13 +32,15 @@ function init(content = {text: ''}) {
     },
     config: {
       font: 'monospace',
-      fontSize: 24, 
+      fontSize: 24,
+      lineHeight: 30,
       width: 800, 
       colors: {
         left: 'gray',
         correct: 'white',
         wrong: 'red',
-        extra: 'darkred'
+        extra: 'darkred',
+        caret: 'cyan'
       }
     }
   }

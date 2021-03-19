@@ -39,4 +39,14 @@
 
 .caret {
   transition: 0.1s;
+  /* animation: caret infinite 1s ease; */
+}
+
+@keyframes caret {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

@@ -1,4 +1,4 @@
 ## TODO:
 - better error count
-- onKeyPress instead of onChange
 - utils
+- fix caret (extra chars on previous word)

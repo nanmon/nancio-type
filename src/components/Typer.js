@@ -1,56 +1,50 @@
 
 import React from 'react';
 import TypingText from './TypingText';
+import Stats from './Stats';
+import { useTyper } from '../util/state';
 const { quotes } = require('../quotes.json')
 
 const WIDTH = 1000;
 
 function Typer() {
-  const [quote, setQuote] = React.useState(randomQuote);
-  const [typed, setTyped] = React.useState('');
-  const [stats, statsDispatch] = React.useReducer(statsReducer, statsInit());
-  const [showStats, setShowStats] = React.useState(false)
-
-  const { text } = quote;
+  const [state, dispatch] = useTyper(randomQuote);
 
   React.useEffect(() => {
-    if (doneTyping(typed, text)) {
-      setShowStats(true);
-      setTyped('');
+    if (state.screen === 'typing' &&  doneTyping(state)) {
+      dispatch({ type: 'screen', screen: 'stats' });
     }
-    if (typed) statsDispatch({ type: 'typing', typed , text });
-  }, [typed, text])
+    // if (typed) statsDispatch({ type: 'typing', typed , text });
+  }, [state, dispatch]);
 
   React.useEffect(() => {
-    if (showStats) return;
+    if (state.screen !== 'typing') return;
     const intervalId = setInterval(() => {
-      statsDispatch({ type: 'interval', delta: 1 });
+      dispatch({ type: 'interval', delta: 1 });
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [showStats]);
+  }, [state.screen, dispatch]);
   
   function onType(e) {
     const char = e.key;
-    if (char.length === 1) setTyped(t => t + char);
-    if (char === 'Backspace') setTyped(t => t.substr(0, t.length - 1))
+    if (char.length === 1 || char === 'Backspace') {
+      dispatch({ type: 'typing', char });
+    }
     if (char === 'Tab') return false;
     return true;
   }
 
   function onNext() {
-    setQuote(randomQuote());
-    setShowStats(false);
-    statsDispatch({ type: 'restart'})
-    setTyped('')
+    dispatch({ type: 'restart', content: randomQuote() })
   }
 
   return (
     <>
-      {showStats 
-        ? <Stats stats={stats} onNext={onNext}/>
+      {state.screen === 'stats' 
+        ? <Stats state={state} onNext={onNext}/>
         : <TypingText 
-            typed={typed} 
-            text={text} 
+            typed={state.typed} 
+            text={state.content.text} 
             maxWidth={WIDTH}
             onType={onType}
           />
@@ -62,19 +56,9 @@ function Typer() {
 
 export default Typer;
 
-function Stats({ stats, onNext }) {
-  return (
-    <>
-      <p>Avg: {avg(stats.wpm)} wpm</p>
-      <p>Time: {stats.wpm.length}s </p>
-      <p>Errors: {stats.errors}</p>
-    </>
-  )
-}
-
-function doneTyping(typed, text) {
+function doneTyping({typed, content}) {
   const typedWords = typed.split(' ').filter(w => w);
-  const allWords = text.split(' ');
+  const allWords = content.text.split(' ');
   if (typedWords.length < allWords.length) return false;
   if (typed.endsWith(' ')) return true;
   const lastTyped = typedWords.pop();
@@ -119,10 +103,6 @@ function randomQuote() {
 
 function last(array) {
   return array[array.length - 1];
-}
-
-function avg(array) {
-  return array.reduce((s, v) => s + v, 0) / array.length;
 }
 
 function didErr({ typed, text }) {

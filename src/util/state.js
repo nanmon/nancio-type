@@ -49,9 +49,12 @@ function init(content = {text: ''}) {
 function reducer(state, action) {
   switch(action.type) {
     case 'typing':
-      const typed = action.char === 'Backspace' 
-        ? state.typed.substr(0, state.typed.length - 1)
-        : state.typed + action.char
+      let { typed } = state;
+      if (action.char === 'Backspace')
+        typed = typed.substr(0, typed.length - 1)
+      else if(action.char === ' ' && typed.endsWith(' ')){
+        // dont add space if space already there
+      } else typed = typed + action.char
       return {  
         ...state,
         typed,

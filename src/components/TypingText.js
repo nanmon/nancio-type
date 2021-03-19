@@ -141,7 +141,7 @@ function wordMetadata(woriginal, wtyped) {
   });
   const extraStr = extra(woriginal)(wtyped);
   chars(extraStr).forEach(char => {
-    charsMeta.push({ str: char, code: 'extra '});
+    charsMeta.push({ str: char, code: 'extra' });
   });
   return { str: woriginal + extraStr, chars: charsMeta };
 }

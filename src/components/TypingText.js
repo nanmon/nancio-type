@@ -89,7 +89,6 @@ function TypingText({ onType }) {
   }
 
   function capslockDetector(e) {
-    console.log(e);
     setCapslock(e.getModifierState('CapsLock'))
   }
 

@@ -45,7 +45,7 @@ function TypingText({ onType }) {
 
 export default TypingText;
 
-const addSpaces = fillBetween(() => <tspan>{" "}</tspan>);
+const addSpaces = fillBetween((_b, _a, index) => <tspan key={'space-'+index}>{" "}</tspan>);
 function Line({ words, fontSize }) {
   return (
     <tspan className="line" dy={fontSize} x={0}>

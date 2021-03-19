@@ -17,7 +17,7 @@ export const fillBetween = fn => array => {
   const afters = array.slice(1);
 
   const res = tuplify(befores, afters)
-    .map(([before, after]) => [before, fn(before, after)])
+    .map(([before, after], index) => [before, fn(before, after, index)])
     .flat();
   res.push(last(array));
   return res;

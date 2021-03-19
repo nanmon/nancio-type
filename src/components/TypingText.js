@@ -103,7 +103,14 @@ function TypingText({ onType }) {
       />
       <svg width={config.width} height={config.lineHeight * 3} onClick={() => inputRef.current.focus()}>
         <text fontFamily={config.font} fontSize={config.fontSize} y={textY}>
-          {lines.map((line, index) => <Line key={index} lineHeight={config.lineHeight} {...line}/>)}
+          {lines.map((line, index) => 
+            <Line 
+              key={index} 
+              lineHeight={config.lineHeight}
+              isCurrent={caret.line === index}
+              {...line}
+            />
+          )}
         </text>
         {inputHasFocus && <Caret {...caret}/>}
       </svg>
@@ -114,22 +121,28 @@ function TypingText({ onType }) {
 export default TypingText;
 
 const addSpaces = fillBetween((_b, _a, index) => <tspan key={'space-'+index}>{" "}</tspan>);
-function Line({ text, typed, lineHeight }) {
+function Line({ text, typed, lineHeight, isCurrent }) {
+  const typedWords = words(typed);
   const _words = tuplify(
     words(text),
-    words(typed),
+   typedWords,
   ).map(([text, typed]) => ({text, typed}));
+  const lastWordIndex = isCurrent ? typedWords.length - 1 : -1;
   return (
     <tspan className="line" dy={lineHeight} x={0}>
-      {addSpaces(
-        _words.map((word, index) => <Word key={index} {...word}/>),
-      )}
+      {addSpaces(_words.map((word, index) => 
+        <Word 
+          key={index} 
+          isCurrent={lastWordIndex === index}
+          {...word}
+        />
+      ))}
     </tspan>
   );
 }
 
 
-function Word({ text, typed }) {
+function Word({ text, typed, isCurrent }) {
   const _chars = tuplify(
     chars(text),
     chars(typed)
@@ -138,8 +151,9 @@ function Word({ text, typed }) {
   chars(extraStr).forEach(char => {
     _chars.push({ typed: char });
   });
+  const redline = !isCurrent && typed && text !== typed;
   return (
-    <tspan className="Word">
+    <tspan className="Word" textDecoration={redline ? 'underline solid red' : null} fill="red">
       {_chars.map((char, index) => <Char key={index} {...char}/>)}
     </tspan>
   );

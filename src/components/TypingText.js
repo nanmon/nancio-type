@@ -71,7 +71,6 @@ function TypingText({ onType }) {
       textWords.slice(0, typedWords.length - 1).join(' '), 
       typedWords.slice(0, typedWords.length - 1).join(' ')
     );
-    debugger;
     if (textUntilCaret) textUntilCaret += ' ';
     if (typed.endsWith(' ')) {
       const wtext = textWords[typedWords.length - 1];

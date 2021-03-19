@@ -8,6 +8,7 @@ function TypingText({ onType }) {
 
   const inputRef = React.useRef();
   const [inputHasFocus, setInputFocus] = React.useState(false);
+  const [capslock, setCapslock] = React.useState(false);
 
   React.useEffect(() => {
     inputRef.current.focus();
@@ -84,6 +85,12 @@ function TypingText({ onType }) {
   function onKeyPress(e) {
     const prevent = onType(e);
     if (prevent) e.preventDefault();
+    setCapslock(e.getModifierState('CapsLock'))
+  }
+
+  function capslockDetector(e) {
+    console.log(e);
+    setCapslock(e.getModifierState('CapsLock'))
   }
 
   const textY = React.useMemo(() => {
@@ -96,11 +103,13 @@ function TypingText({ onType }) {
     <>
       <input 
         ref={inputRef}
-        onKeyDown={onKeyPress} 
+        onKeyDown={onKeyPress}
+        onKeyUp={capslockDetector}
         style={{height: 0, padding: 0, border: 0}}
         onFocus={() => setInputFocus(true)}
         onBlur={() => setInputFocus(false)}
       />
+      {capslock && <p>CAPSLOCK IS ACTIVE</p>}
       <svg width={config.width} height={config.lineHeight * 3} onClick={() => inputRef.current.focus()}>
         <text fontFamily={config.font} fontSize={config.fontSize} y={textY}>
           {lines.map((line, index) => 

@@ -26,9 +26,9 @@ function Typer({ nextContent }) {
     const char = e.key;
     if (char.length === 1 || char === 'Backspace') {
       dispatch({ type: 'typing', char });
+      return true;
     }
-    if (char === 'Tab') return false;
-    return true;
+    return false;
   }
 
   function onNext() {

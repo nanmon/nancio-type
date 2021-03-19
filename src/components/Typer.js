@@ -14,7 +14,6 @@ function Typer() {
     if (state.screen === 'typing' &&  doneTyping(state)) {
       dispatch({ type: 'screen', screen: 'stats' });
     }
-    // if (typed) statsDispatch({ type: 'typing', typed , text });
   }, [state, dispatch]);
 
   React.useEffect(() => {
@@ -66,49 +65,7 @@ function doneTyping({typed, content}) {
   return lastTyped === lastWord;
 }
 
-function statsInit() {
-  return {
-    count: 0, prevCount: 0, wpm: [], errors: 0
-  }
-}
-
-function statsReducer(state, action) {
-  switch(action.type) {
-    case 'typing':
-      return {  
-        ...state,
-        count: state.count + 1,
-        errors: state.errors + Number(didErr(action))
-      }
-    case 'interval':
-      if (state.count === 0) return state;
-      const k = action.delta / 60 * 5; //transform to wpm
-      return {
-        ...state,
-        prevCount: state.count,
-        wpm: [
-          ...state.wpm,
-          (state.count - state.prevCount) / k
-        ]
-      }
-    case 'restart': return statsInit();
-    default: return state;
-  }
-}
-
 function randomQuote() {
   const index = Math.floor(Math.random() * quotes.length);
   return quotes[index]
-}
-
-function last(array) {
-  return array[array.length - 1];
-}
-
-function didErr({ typed, text }) {
-  if (typed.endsWith(' ')) return false;
-  const wordsTyped = typed.split(' ');
-  const lastWord = wordsTyped[wordsTyped.length - 1];
-  const actualWord = text.split(' ')[wordsTyped.length - 1];
-  return actualWord && actualWord[lastWord.length - 1] !== lastWord[lastWord.length - 1];
 }

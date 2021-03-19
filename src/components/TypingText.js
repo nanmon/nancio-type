@@ -131,5 +131,3 @@ function getTextWidth(text, font = "500 24px monospace") {
   context.font = font;
   return context.measureText(text).width;
 }
-
-const log = o => console.log(o) || o;

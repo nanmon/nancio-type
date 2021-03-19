@@ -9,14 +9,19 @@ function TypingText({ typed, text, maxWidth, onType }) {
 
   React.useEffect(() => {
     inputRef.current.focus();
-  }, []);
+  }, [text]);
+
+  function onKeyPress(e) {
+    const prevent = onType(e);
+    if (prevent) e.preventDefault();
+  }
   
   function drawWords() {
     let line = []
     const renderedWords = allWords.map((word, index) => {
       line.push(word);
       const width = getTextWidth(line.join(' '));
-      const props = {};
+      const props = {key: index};
       if (width > maxWidth) {
         props.x = '0';
         props.dy = "24"
@@ -75,8 +80,7 @@ function TypingText({ typed, text, maxWidth, onType }) {
     <>
       <input 
         ref={inputRef}
-        value={typed} 
-        onChange={onType} 
+        onKeyDown={onKeyPress} 
         style={{height: 0, padding: 0, border: 0}}
         onFocus={() => setInputFocus(true)}
         onBlur={() => setInputFocus(false)}

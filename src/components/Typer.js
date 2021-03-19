@@ -3,7 +3,7 @@ import React from 'react';
 import TypingText from './TypingText';
 const { quotes } = require('../quotes.json')
 
-const WIDTH = 1000
+const WIDTH = 1000;
 
 function Typer() {
   const [quote, setQuote] = React.useState(randomQuote);
@@ -18,6 +18,7 @@ function Typer() {
       setShowStats(true);
       setTyped('');
     }
+    if (typed) statsDispatch({ type: 'typing', typed , text });
   }, [typed, text])
 
   React.useEffect(() => {
@@ -29,16 +30,18 @@ function Typer() {
   }, [showStats]);
   
   function onType(e) {
-    const { value } = e.target;
-    setTyped(value);
-
-    statsDispatch({ type: 'typing', typed: value, text });
+    const char = e.key;
+    if (char.length === 1) setTyped(t => t + char);
+    if (char === 'Backspace') setTyped(t => t.substr(0, t.length - 1))
+    if (char === 'Tab') return false;
+    return true;
   }
 
   function onNext() {
     setQuote(randomQuote());
     setShowStats(false);
     statsDispatch({ type: 'restart'})
+    setTyped('')
   }
 
   return (

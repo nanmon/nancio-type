@@ -1,9 +1,10 @@
 import React from 'react';
 import { clamp, fillBetween, last, tuplify } from '../util/std';
 import { chars, extra, getTextWidth, withExtra, words } from '../util/text'
-import { useTyper } from '../util/state'
+import { useTyper } from '../components/StateProvider'
 
 function TypingText({ onType }) {
+  debugger;
   const { content, typed, config } = useTyper();
 
   const inputRef = React.useRef();

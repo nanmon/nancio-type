@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import Typer from './components/Typer';
-import { TyperProvider } from './util/state';
+import { TyperProvider } from './components/StateProvider';
 const { quotes } = require('./quotes.json')
 
 function App() {

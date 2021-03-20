@@ -1,8 +1,7 @@
-
 import React from 'react';
 import TypingText from './TypingText';
 import Stats from './Stats';
-import { useTyper, useTyperDispatch } from '../util/state';
+import { useTyper, useTyperDispatch } from './StateProvider';
 
 function Typer({ nextContent }) {
 
@@ -25,14 +24,14 @@ function Typer({ nextContent }) {
   function onType(e) {
     const char = e.key;
     if (char.length === 1 || char === 'Backspace') {
-      dispatch({ type: 'typing', char });
+      dispatch({ type: 'typing', char, time: Date.now() });
       return true;
     }
     return false;
   }
 
   function onNext() {
-    dispatch({ type: 'restart', content: nextContent() })
+    dispatch({ type: 'init', content: nextContent() })
   }
 
   return (

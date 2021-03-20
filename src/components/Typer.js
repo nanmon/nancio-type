@@ -13,14 +13,6 @@ function Typer({ nextContent }) {
     }
   }, [state, dispatch]);
 
-  React.useEffect(() => {
-    if (state.screen !== 'typing') return;
-    const intervalId = setInterval(() => {
-      dispatch({ type: 'interval', delta: 1 });
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [state.screen, dispatch]);
-  
   function onType(e) {
     const char = e.key;
     if (char.length === 1 || char === 'Backspace') {

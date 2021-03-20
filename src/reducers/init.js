@@ -4,7 +4,17 @@ export default function init(_state, {content = {text: ''}}) {
     typed: '',
     screen: 'typing',
     stats: {
-      count: 0, prevCount: 0, wpm: [], errors: 0
+      count: 0, 
+      prevCount: 0, 
+      wpm: [], 
+      errors: 0,
+      errs: []
+    },
+    temp: {
+      prevTime: 0,
+      delta: 0,
+      errors: 0,
+      count: 0
     },
     config: {
       font: 'monospace',

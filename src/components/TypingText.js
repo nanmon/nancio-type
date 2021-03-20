@@ -4,7 +4,6 @@ import { chars, extra, getTextWidth, withExtra, words } from '../util/text'
 import { useTyper } from '../components/StateProvider'
 
 function TypingText({ onType }) {
-  debugger;
   const { content, typed, config } = useTyper();
 
   const inputRef = React.useRef();

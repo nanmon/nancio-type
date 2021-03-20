@@ -4,8 +4,8 @@ export const clamp = (min, max) => val => {
   return val;
 }
 
-export const compose = (...fns) => arg => {
-  return fns.reduce((acc, fn) => fn(acc), arg)
+export const compose = (...fns) => (arg, ...rest) => {
+  return fns.reduce((acc, fn) => fn(acc, ...rest), arg);
 }
 
 export const last = array => {
@@ -50,5 +50,24 @@ export const memoize = (fn, stackSize = 15) => {
     keyStack.push(key);
 
     return memory[key];
+  }
+}
+
+export const spread = (obj, path, value) => {
+  const [key, ...otherKeys] = path;
+  if (typeof key === 'number') {
+    return [
+      ...obj.slice(0, key),
+      otherKeys.length === 0
+        ? value
+        : spread(obj[key], otherKeys.join('.'), value),
+      ...obj.slice(key)
+    ]
+  }
+  return {
+    ...obj,
+    [key]: otherKeys.length === 0
+      ? value
+      : spread(obj[key], otherKeys.join('.'), value)
   }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import TypingText from './TypingText';
+import TypingTest from './TypingTest';
 import Stats from './Stats';
 import { useTyper, useTyperDispatch } from './StateProvider';
 
@@ -30,7 +30,7 @@ function Typer({ nextContent }) {
     <>
       {state.screen === 'stats' 
         ? <Stats state={state} onNext={onNext}/>
-        : <TypingText
+        : <TypingTest
             onType={onType}
           />
       }

@@ -1,4 +1,4 @@
-import { tuplify } from './std'
+import { last, tuplify } from './std'
 
 export const words = (text = '') => {
   return text.split(' ').filter(w => w);
@@ -22,9 +22,9 @@ export const withExtra = (text, typed) => {
   }).join(' ');
 }
 
-export const getTextWidth = (text, {font, fontSize}) => {
+export const getTextWidth = (text, {fontFamily, fontSize}) => {
   const canvas = document.createElement("canvas");
   const context = canvas.getContext("2d");
-  context.font = `${fontSize}px ${font}`;
+  context.font = `${fontSize}px ${fontFamily}`;
   return context.measureText(text).width;
 }

@@ -1,0 +1,7 @@
+.Word {
+  border-bottom: 2px solid transparent;
+}
+
+.Word.redline {
+  border-bottom-color: red;
+}

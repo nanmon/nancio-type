@@ -17,7 +17,7 @@ export default function init(_state, {content = {text: ''}}) {
       count: 0
     },
     config: {
-      font: 'monospace',
+      fontFamily: 'monospace',
       fontSize: 24,
       lineHeight: 30,
       width: 800, 

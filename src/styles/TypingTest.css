@@ -1,0 +1,11 @@
+.TypingTest {
+  position: relative;
+  overflow: hidden;
+}
+
+.TypingTest .words {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  padding: 10px;
+}

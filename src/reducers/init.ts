@@ -1,6 +1,9 @@
-export default function init(_state, {content = {text: ''}}) {
+export default function init(
+  _state: Typer.State, 
+  action: Typer.Actions.Init
+): Typer.State {
   return {
-    content,
+    content: action.content,
     typed: '',
     screen: 'typing',
     stats: {

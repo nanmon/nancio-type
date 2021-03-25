@@ -1,15 +1,23 @@
 import { compose, last } from '../util/std';
 import { words } from '../util/text';
 
-export default compose(
+const typing: (
+  state: Typer.State, 
+  action: Typer.Actions.Typing
+) => Typer.State =  compose(
   setTyped,
   setCount,
   setErrors,
   setTemp,
   setDone
-)
+);
 
-function setTyped(state, { char }) {
+export default typing;
+
+function setTyped(
+  state: Typer.State, 
+  { char }: Typer.Actions.Typing
+) {
   let { typed } = state;
   // dont add spaces together
   if (char === ' ' && typed.endsWith(' ')) return state;
@@ -19,7 +27,10 @@ function setTyped(state, { char }) {
   return { ...state, typed };
 }
 
-function setCount(state, { char }) {
+function setCount(
+  state: Typer.State, 
+  { char }: Typer.Actions.Typing
+) {
   if (['', 'Backspace'].includes(char)) 
     return state;
   return {
@@ -28,7 +39,10 @@ function setCount(state, { char }) {
   };
 }
 
-function setErrors(state, action) {
+function setErrors(
+  state: Typer.State, 
+  action: Typer.Actions.Typing
+) {
   if (mistype(state, action))
     return {
       ...state,
@@ -37,7 +51,10 @@ function setErrors(state, action) {
   return state;
 }
 
-function setTemp(state, { time, char }) {
+function setTemp(
+  state: Typer.State, 
+  { time, char }: Typer.Actions.Typing
+) {
   const { temp } = state;
   if (temp.prevTime === 0) {
     return {
@@ -71,7 +88,7 @@ function setTemp(state, { time, char }) {
   return newState;
 }
 
-function setDone(state) {
+function setDone(state: Typer.State) {
   if (doneTyping(state))
     return {
       ...state,
@@ -80,7 +97,10 @@ function setDone(state) {
   return state;
 }
 
-function mistype(state, { char }) {
+function mistype(
+  state: Typer.State, 
+  { char }: Pick<Typer.Actions.Typing, 'char'>
+) {
   if (['', 'Backspace'].includes(char)) return false;
 
   const { typed, content } = state;
@@ -99,7 +119,11 @@ function mistype(state, { char }) {
   return actualChar !== lastChar;
 }
 
-function flushStats(state, { time, char }, newDelta) {
+function flushStats(
+  state: Typer.State, 
+  { time, char }: Pick<Typer.Actions.Typing, 'time' | 'char'>, 
+  newDelta: number
+) {
   const pm = 1 / 60 * 5;
   const wpm = state.temp.count / pm;
   if (wpm > 200) debugger;
@@ -119,7 +143,7 @@ function flushStats(state, { time, char }, newDelta) {
   };
 }
 
-function doneTyping({ typed, content }) {
+function doneTyping({ typed, content }: Typer.State) {
   const typedWords = words(typed);
   const allWords = words(content.text);
   if (typedWords.length < allWords.length) return false;

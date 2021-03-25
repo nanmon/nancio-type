@@ -1,17 +1,17 @@
 import Char from "./Char";
 import { useTyper } from "./StateProvider";
 import { tuplify } from "../util/std";
-import { chars, extra, getTextWidth } from "../util/text";
+import { getChars, getExtra, getWidth } from "../util/text";
 import '../styles/Word.css';
 
 function Word({ text, typed, current }) {
   const { config } = useTyper();
   const _chars = tuplify(
-    chars(text),
-    chars(typed),
+    getChars(text),
+    getChars(typed),
   );
-  const extraStr = extra(text)(typed);
-  chars(extraStr).forEach(char => {
+  const extraStr = getExtra(text, typed);
+  getChars(extraStr).forEach(char => {
     _chars.push([null, char]);
   });
   const redline = !current && typed && text !== typed;
@@ -20,7 +20,7 @@ function Word({ text, typed, current }) {
     redline && 'redline',
     current && 'current'
   ].filter(c => c).join(' ');
-  const space = getTextWidth(' ', config);
+  const space = getWidth(' ', config);
   return (
     <div className={className} style={{marginRight: space}}>
       {_chars.map(([text, typed], index) => 

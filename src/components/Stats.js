@@ -1,6 +1,6 @@
 import React from 'react';
 import { tuplify } from '../util/std';
-import { chars, words, extra } from '../util/text';
+import { getChars, getWords, getExtra } from '../util/text';
 
 
 function Stats({ state }) {
@@ -26,18 +26,18 @@ function avg(array) {
 function charCounts(text, typed) {
   let correct = 0, incorrect = 0, missing = 0, extras = 0
   tuplify(
-    words(text),
-    words(typed)
+    getWords(text),
+    getWords(typed)
   ).forEach(([wtext, wtyped]) => {
     tuplify(
-      chars(wtext),
-      chars(wtyped)
+      getChars(wtext),
+      getChars(wtyped)
     ).forEach(([chtext, chtyped]) => {
       if (!chtyped) missing++;
       else if (chtext === chtyped) correct++;
       else incorrect++;
     });
-    chars(extra(wtext)(wtyped)).forEach(() => extras++);
+    getChars(getExtra(wtext, wtyped)).forEach(() => extras++);
   })
   return {correct, incorrect, missing, extra: extras }
 }

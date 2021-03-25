@@ -1,5 +1,5 @@
 import { compose, last } from '../util/std';
-import { words } from '../util/text';
+import { getWords } from '../util/text';
 
 const typing: (
   state: Typer.State, 
@@ -104,9 +104,9 @@ function mistype(
   if (['', 'Backspace'].includes(char)) return false;
 
   const { typed, content } = state;
-  const wordsTyped = words(typed);
+  const wordsTyped = getWords(typed);
   const lastWord = last(wordsTyped);
-  const actualWord = words(content.text)[wordsTyped.length - 1];
+  const actualWord = getWords(content.text)[wordsTyped.length - 1];
 
   // it'd be like that sometimes
   if (!actualWord) return false;
@@ -144,8 +144,8 @@ function flushStats(
 }
 
 function doneTyping({ typed, content }: Typer.State) {
-  const typedWords = words(typed);
-  const allWords = words(content.text);
+  const typedWords = getWords(typed);
+  const allWords = getWords(content.text);
   if (typedWords.length < allWords.length) return false;
   if (typed.endsWith(' ')) return true;
   const lastTyped = typedWords.pop();

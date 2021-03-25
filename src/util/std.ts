@@ -1,18 +1,20 @@
-export const clamp = (min, max) => val => {
+export const clamp = (min: number, max: number) => (val: number) => {
   if (val < min) return min;
   if (val > max) return max;
   return val;
 }
 
-export const compose = (...fns) => (arg, ...rest) => {
+export const compose = (...fns: Function[]) => (arg: any, ...rest: any[]) => {
   return fns.reduce((acc, fn) => fn(acc, ...rest), arg);
 }
 
-export const last = array => {
+export const last = (array: any[]) => {
   return array[array.length - 1];
 }
 
-export const fillBetween = fn => array => {
+export const fillBetween = (
+  fn: Function
+) => (array: any[]) => {
   const befores = array.slice(0, array.length - 1);
   const afters = array.slice(1);
 
@@ -23,7 +25,7 @@ export const fillBetween = fn => array => {
   return res;
 }
 
-export const tuplify = (firstItems, ...arrays) => {
+export const tuplify = (firstItems: any[], ...arrays: any[][]) => {
   return firstItems.map((first, index) => {
     return [
       first, 
@@ -32,10 +34,10 @@ export const tuplify = (firstItems, ...arrays) => {
   });
 }
 
-export const memoize = (fn, stackSize = 15) => {
-  const memory = {};
-  const keyStack = [];
-  return (...args) => {
+export const memoize = (fn: Function, stackSize = 15) => {
+  const memory: Record<string, any> = {};
+  const keyStack: string[] = [];
+  return (...args: any[]) => {
     const key = JSON.stringify(args);
     if (!memory[key]) 
       memory[key] = fn(...args);
@@ -45,7 +47,7 @@ export const memoize = (fn, stackSize = 15) => {
     if (keyIndex !== -1) keyStack.splice(keyIndex, 1);
     else if (keyStack.length >= stackSize) {
       const oldKey = keyStack.shift();
-      delete memory[oldKey];
+      delete memory[oldKey!];
     }
     keyStack.push(key);
 
@@ -53,21 +55,21 @@ export const memoize = (fn, stackSize = 15) => {
   }
 }
 
-export const spread = (obj, path, value) => {
+export const spread = (obj: {[k:string]: any} | any[], path: (string | number)[], value: any): object => {
   const [key, ...otherKeys] = path;
-  if (typeof key === 'number') {
+  if (obj instanceof Array) {
     return [
-      ...obj.slice(0, key),
+      ...obj.slice(0, Number(key)),
       otherKeys.length === 0
         ? value
-        : spread(obj[key], otherKeys.join('.'), value),
-      ...obj.slice(key)
+        : spread(obj[Number(key)], otherKeys, value),
+      ...obj.slice(Number(key))
     ]
   }
   return {
     ...obj,
     [key]: otherKeys.length === 0
       ? value
-      : spread(obj[key], otherKeys.join('.'), value)
+      : spread(obj[key + ''], otherKeys, value)
   }
 }

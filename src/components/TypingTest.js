@@ -1,6 +1,6 @@
 import React from 'react';
 import { tuplify } from '../util/std';
-import { words } from '../util/text'
+import { getWords } from '../util/text'
 import { useTyper } from './StateProvider'
 import Caret from './Caret';
 import Word from './Word';
@@ -19,9 +19,9 @@ function TypingTest({ onType }) {
     inputRef.current.focus();
   }, [content.text]);
 
-  const typedWords = words(typed)
+  const typedWords = getWords(typed)
   const _words = tuplify(
-    words(content.text),
+    getWords(content.text),
     typedWords,
     [null, ...typedWords],
     typedWords.slice(1)

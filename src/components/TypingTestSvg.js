@@ -1,6 +1,12 @@
 import React from 'react';
 import { clamp, fillBetween, last, tuplify } from '../util/std';
-import { chars, extra, getTextWidth, withExtra, words } from '../util/text'
+import { 
+  getChars, 
+  getExtra, 
+  getTextWidth, 
+  withExtra, 
+  getWords 
+} from '../util/text'
 import { useTyper } from '../components/StateProvider'
 
 function TypingText({ onType }) {
@@ -28,8 +34,8 @@ function TypingText({ onType }) {
     const lines = [];
     let currentLine = [];
     tuplify(
-      words(content.text),
-      words(typed),
+      getWords(content.text),
+      getWords(typed),
     ).forEach(([woriginal, wtyped]) => {
       const wordToken = {
         text: woriginal,
@@ -37,7 +43,7 @@ function TypingText({ onType }) {
       }
       currentLine.push(wordToken);
       const lineStr = currentLine
-        .map(w => w.text + extra(w.text)(w.typed))
+        .map(w => w.text + getExtra(w.text, w.typed))
         .join(' ');
       const width = getTextWidth(lineStr, config);
       if (width > config.width) {
@@ -61,8 +67,8 @@ function TypingText({ onType }) {
       index = lines.length - 1;
     }
     const lastTypedLine = lines[index];
-    const typedWords = words(lastTypedLine.typed);
-    const textWords = words(lastTypedLine.text);
+    const typedWords = getWords(lastTypedLine.typed);
+    const textWords = getWords(lastTypedLine.text);
     if (typedWords.length === textWords.length) {
       // completed this line but not started the next one
       if (typed.endsWith(' ')) return { line: index + 1, x: 0}
@@ -75,7 +81,7 @@ function TypingText({ onType }) {
     if (typed.endsWith(' ')) {
       const wtext = textWords[typedWords.length - 1];
       textUntilCaret += wtext
-        + extra(wtext)(last(typedWords))
+        + getExtra(wtext, last(typedWords))
         + ' ';
     } else textUntilCaret += last(typedWords);
     return { line: index, x: getTextWidth(textUntilCaret, config) };
@@ -129,9 +135,9 @@ export default TypingText;
 
 const addSpaces = fillBetween((_b, _a, index) => <tspan key={'space-'+index}>{" "}</tspan>);
 function Line({ text, typed, lineHeight, isCurrent }) {
-  const typedWords = words(typed);
+  const typedWords = getWords(typed);
   const _words = tuplify(
-    words(text),
+    getWords(text),
    typedWords,
   ).map(([text, typed]) => ({text, typed}));
   const lastWordIndex = isCurrent ? typedWords.length - 1 : -1;
@@ -151,11 +157,11 @@ function Line({ text, typed, lineHeight, isCurrent }) {
 
 function Word({ text, typed, isCurrent }) {
   const _chars = tuplify(
-    chars(text),
-    chars(typed)
+    getChars(text),
+    getChars(typed)
   ).map(([text, typed]) => ({ text, typed }));
-  const extraStr = extra(text)(typed);
-  chars(extraStr).forEach(char => {
+  const extraStr = getExtra(text, typed);
+  getChars(extraStr).forEach(char => {
     _chars.push({ typed: char });
   });
   const redline = !isCurrent && typed && text !== typed;

@@ -1,13 +1,13 @@
 import React from 'react';
 import { last } from '../util/std';
 
-export function useCaret(typed, config) {
-  const [pos, setPos] = React.useState(null);
+export function useCaret(typed: string, config: Typer.Config) {
+  const [pos, setPos] = React.useState<Position | null>(null);
 
   React.useEffect(() => {
     const wordEl = document.querySelector('.Word.current');
     if (!wordEl) return;
-    const wordsEl = document.querySelector('.words');
+    const wordsEl = document.querySelector('.words')!;
     const originRect = wordsEl.getBoundingClientRect();
     const wrect = wordEl.getBoundingClientRect();
     let charsTyped = wordEl.querySelectorAll('.Char:not(.left)');
@@ -27,4 +27,8 @@ export function useCaret(typed, config) {
   }, [typed, config]);
 
   return pos
+}
+
+interface Position {
+  x: number; y: number;
 }

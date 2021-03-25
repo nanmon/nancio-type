@@ -1,3 +1,8 @@
+interface ArrayLike {
+  [index: number]: any; 
+  length: number
+}
+
 export const clamp = (min: number, max: number) => (val: number) => {
   if (val < min) return min;
   if (val > max) return max;
@@ -8,7 +13,7 @@ export const compose = (...fns: Function[]) => (arg: any, ...rest: any[]) => {
   return fns.reduce((acc, fn) => fn(acc, ...rest), arg);
 }
 
-export const last = (array: any[]) => {
+export const last = (array: ArrayLike) => {
   return array[array.length - 1];
 }
 

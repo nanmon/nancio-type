@@ -1,7 +1,12 @@
 import React from 'react';
 import { useTyper } from "./StateProvider";
 
-function Caret({ position, focused }) {
+interface Props {
+  position?: Typer.CaretPosition;
+  focused: boolean;
+}
+
+function Caret({ position, focused }: Props) {
   const { config, typed } = useTyper();
   const [className, setClassName] = React.useState('caret');
 

@@ -1,9 +1,11 @@
-import React from 'react';
-import { tuplify } from '../util/std';
+import { tuplify, avg } from '../util/std';
 import { getChars, getWords, getExtra } from '../util/text';
 
+interface Props {
+  state: Typer.State;
+}
 
-function Stats({ state }) {
+function Stats({ state }: Props) {
   const { stats, content, typed } = state;
   const acc = (1 - stats.errors / content.text.length) * 100
   const counts = charCounts(content.text, typed);
@@ -19,11 +21,8 @@ function Stats({ state }) {
 
 export default Stats;
 
-function avg(array) {
-  return array.reduce((s, v) => s + v, 0) / array.length;
-}
 
-function charCounts(text, typed) {
+function charCounts(text: string, typed: string) {
   let correct = 0, incorrect = 0, missing = 0, extras = 0
   tuplify(
     getWords(text),

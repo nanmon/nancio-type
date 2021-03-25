@@ -78,3 +78,8 @@ export const spread = (obj: {[k:string]: any} | any[], path: (string | number)[]
       : spread(obj[key + ''], otherKeys, value)
   }
 }
+
+
+export function avg(array: number[]) {
+  return array.reduce((s, v) => s + v, 0) / array.length;
+}

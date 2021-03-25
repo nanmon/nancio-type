@@ -1,7 +1,12 @@
 import React from 'react';
 import { useTyper } from "./StateProvider";
 
-function Char({ text, typed }) {
+interface Props {
+  text?: string;
+  typed?: string;
+}
+
+function Char({ text, typed }: Props) {
   const { config } = useTyper();
   const code = React.useMemo(() => {
     if (!typed) return 'left';

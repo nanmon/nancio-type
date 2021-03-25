@@ -62,4 +62,9 @@ namespace Typer {
       time: number;
     }
   }
+
+  interface CaretPosition {
+    x: number; 
+    y: number;
+  }
 }

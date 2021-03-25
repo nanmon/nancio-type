@@ -2,7 +2,7 @@ import React from 'react';
 import { last } from '../util/std';
 
 export function useCaret(typed: string, config: Typer.Config) {
-  const [pos, setPos] = React.useState<Position | null>(null);
+  const [pos, setPos] = React.useState<Typer.CaretPosition | null>(null);
 
   React.useEffect(() => {
     const wordEl = document.querySelector('.Word.current');
@@ -27,8 +27,4 @@ export function useCaret(typed: string, config: Typer.Config) {
   }, [typed, config]);
 
   return pos
-}
-
-interface Position {
-  x: number; y: number;
 }

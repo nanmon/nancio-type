@@ -1,4 +1,3 @@
-import React from 'react';
 import './App.css';
 import Typer from './components/Typer';
 import { TyperProvider } from './components/StateProvider';

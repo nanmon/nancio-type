@@ -1,4 +1,4 @@
-namespace Typer {
+declare namespace Typer {
   interface State {
     content: Content;
     typed: string,

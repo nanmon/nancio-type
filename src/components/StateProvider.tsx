@@ -7,7 +7,7 @@ const DispatchContext =
 
 interface Props {
   firstContent: () => Typer.Content;
-  children: React.ReactChildren
+  children: React.ReactNode
 }
 
 export function TyperProvider({ firstContent, children }: Props) {

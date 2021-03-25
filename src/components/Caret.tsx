@@ -2,7 +2,7 @@ import React from 'react';
 import { useTyper } from "./StateProvider";
 
 interface Props {
-  position?: Typer.CaretPosition;
+  position: Typer.CaretPosition | null;
   focused: boolean;
 }
 

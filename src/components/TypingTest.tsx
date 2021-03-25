@@ -7,16 +7,20 @@ import Word from './Word';
 import '../styles/TypingTest.css';
 import { useCaret } from '../hooks/typing-test';
 
-function TypingTest({ onType }) {
+interface Props {
+  onType(e: React.KeyboardEvent<HTMLInputElement>): null;
+}
+
+function TypingTest({ onType }: Props) {
   const { content, typed, config } = useTyper();
 
-  const inputRef = React.useRef();
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [inputHasFocus, setInputFocus] = React.useState(false);
   const [capslock, setCapslock] = React.useState(false);
   const caretPosition = useCaret(typed, config);
 
   React.useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current?.focus();
   }, [content.text]);
 
   const typedWords = getWords(typed)
@@ -27,20 +31,20 @@ function TypingTest({ onType }) {
     typedWords.slice(1)
   )
 
-  function onKeyPress(e) {
+  function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     const prevent = onType(e);
     if (prevent) e.preventDefault();
     capslockDetector(e);
   }
 
-  function capslockDetector(e) {
+  function capslockDetector(e: React.KeyboardEvent<HTMLInputElement>) {
     setCapslock(e.getModifierState('CapsLock'));
   }
 
-  function isCurrent(word, prev, next) {
+  function isCurrent(word: string, prev: string, next: string) {
     if (!typed && !prev) return true;
-    if (typed.endsWith(' ')) return prev && !word;
-    return word && !next;
+    if (typed.endsWith(' ')) return prev != null && word == null;
+    return word != null && next == null;
   }
 
   const offset = React.useMemo(() => {
@@ -68,7 +72,7 @@ function TypingTest({ onType }) {
       {capslock && <p>CAPSLOCK IS ACTIVE</p>}
       <div 
         className="words" 
-        onClick={() => inputRef.current.focus()}
+        onClick={() => inputRef.current?.focus()}
         style={{ width: config.width, transform: `translateY(${-offset}px)`}}
       >
         {_words.map(([text, typedWord, prevTyped, nextTyped], index) => 

@@ -9,7 +9,7 @@ const ducers = {
 };
 
 export default function reducer(
-  state: Typer.State, 
+  state: Typer.State | null, 
   action: Typer.Actions.Any) 
 {
   const r = ducers[action.type] as Reducer;
@@ -17,4 +17,4 @@ export default function reducer(
   return r(state, action);
 }
 
-type Reducer = (state: Typer.State, action: Typer.Actions.Any) => Typer.State;
+type Reducer = (state: Typer.State | null, action: Typer.Actions.Any) => Typer.State;

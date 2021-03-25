@@ -1,14 +1,20 @@
 import React from 'react';
 import reducer from '../reducers';
 
-const StateContext = React.createContext();
-const DispatchContext = React.createContext();
+const StateContext = React.createContext<Typer.State>(init({ text: ''})!);
+const DispatchContext = 
+  React.createContext<React.Dispatch<Typer.Actions.Any> | null>(null);
 
-export function TyperProvider({ firstContent, children }) {
+interface Props {
+  firstContent: () => Typer.Content;
+  children: React.ReactChildren
+}
+
+export function TyperProvider({ firstContent, children }: Props) {
   const [state, dispatch] = React.useReducer(reducer, null, () => init(firstContent()));
   return (
     <DispatchContext.Provider value={dispatch}>
-      <StateContext.Provider value={state}>
+      <StateContext.Provider value={state!}>
         {children}
       </StateContext.Provider>
     </DispatchContext.Provider>
@@ -23,6 +29,6 @@ export function useTyperDispatch() {
   return React.useContext(DispatchContext);
 }
 
-function init(content) {
+function init(content: Typer.Content) {
   return reducer(null, { type: 'init', content });
 }

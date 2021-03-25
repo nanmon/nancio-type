@@ -4,7 +4,13 @@ import { tuplify } from "../util/std";
 import { getChars, getExtra, getWidth } from "../util/text";
 import '../styles/Word.css';
 
-function Word({ text, typed, current }) {
+interface Props {
+  text: string;
+  typed: string;
+  current: boolean;
+}
+
+function Word({ text, typed, current }: Props) {
   const { config } = useTyper();
   const _chars = tuplify(
     getChars(text),

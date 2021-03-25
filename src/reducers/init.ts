@@ -1,5 +1,5 @@
 export default function init(
-  _state: Typer.State, 
+  _state: Typer.State | null, 
   action: Typer.Actions.Init
 ): Typer.State {
   return {

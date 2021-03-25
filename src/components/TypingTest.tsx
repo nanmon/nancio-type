@@ -8,7 +8,7 @@ import '../styles/TypingTest.css';
 import { useCaret } from '../hooks/typing-test';
 
 interface Props {
-  onType(e: React.KeyboardEvent<HTMLInputElement>): null;
+  onType(e: React.KeyboardEvent<HTMLInputElement>): boolean;
 }
 
 function TypingTest({ onType }: Props) {

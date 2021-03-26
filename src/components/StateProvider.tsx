@@ -6,12 +6,17 @@ const DispatchContext =
   React.createContext<React.Dispatch<Typer.Actions.Any> | null>(null);
 
 interface Props {
-  firstContent: () => Typer.Content;
+  content: Typer.Content;
   children: React.ReactNode
 }
 
-export function TyperProvider({ firstContent, children }: Props) {
-  const [state, dispatch] = React.useReducer(reducer, null, () => init(firstContent()));
+export function TyperProvider({ content, children }: Props) {
+  const [state, dispatch] = React.useReducer(reducer, null, () => init(content));
+
+  React.useEffect(() => {
+    dispatch({type: 'init', content });
+  }, [content]);
+
   return (
     <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={state!}>

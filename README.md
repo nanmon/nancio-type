@@ -1,5 +1,5 @@
 # Run it
-First, [Steal the quotes file from monkeytype source code](https://raw.githubusercontent.com/Miodec/monkeytype/master/static/quotes/english.json) and put it on `src/quotes.json`  
+First, [Steal the quotes file from monkeytype source code](https://raw.githubusercontent.com/Miodec/monkeytype/master/static/quotes/english.json) and put it on `src/pages/quotes/quotes.json`  
 ```
 npm install
 npm start

@@ -4,10 +4,10 @@ import Stats from './Stats';
 import { useTyper, useTyperDispatch } from './StateProvider';
 
 interface Props {
-  nextContent(): Typer.Content;
+  onNext(): void;
 }
 
-function Typer({ nextContent }: Props) {
+function Typer({ onNext }: Props) {
 
   const [state, dispatch] = [useTyper(), useTyperDispatch()!];
 
@@ -18,10 +18,6 @@ function Typer({ nextContent }: Props) {
       return true;
     }
     return false;
-  }
-
-  function onNext() {
-    dispatch({ type: 'init', content: nextContent() })
   }
 
   return (

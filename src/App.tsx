@@ -1,11 +1,11 @@
 import './App.css';
-import Yoshi from './pages/yoshi/Yoshi';
+import Router from './pages';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Yoshi/>
+        <Router/>
       </header>
     </div>
   );

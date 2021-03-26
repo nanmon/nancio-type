@@ -5,9 +5,13 @@ const { quotes } = require('./quotes.json')
 function Quotes() {
   const [quote, setQuote] = React.useState(randomQuote);
 
+  const onType = React.useCallback(t => {
+    // console.log(t);
+  }, [])
+
   return (
     <>
-      <Typer content={quote} />
+      <Typer content={quote} onType={onType}/>
       <button onClick={() => setQuote(randomQuote())}>Next</button>
     </>
   );

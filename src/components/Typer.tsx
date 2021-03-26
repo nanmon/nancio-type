@@ -9,7 +9,7 @@ const DispatchContext =
 
 interface Props {
   content: Typer.Content;
-  onType?(typed: string): void;
+  onType?(state: Typer.State): void;
 }
 
 export function Typer({ content, onType }: Props) {
@@ -19,10 +19,12 @@ export function Typer({ content, onType }: Props) {
     dispatch({type: 'init', content });
   }, [content]);
 
-  const { typed } = state!;
+  const prevTyped = React.useRef<string | null>(null);
   React.useEffect(() => {
-    if (onType) onType(typed);
-  }, [typed, onType]);
+    if (!onType || prevTyped.current === state!.typed) return;
+    prevTyped.current = state!.typed;
+    if (onType) onType(state!);
+  }, [state, onType]);
 
   return (
     <DispatchContext.Provider value={dispatch}>

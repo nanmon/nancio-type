@@ -9,4 +9,3 @@ npm start
 - do not count space and backspaces for wpm
 - utils
 - memoize text utils
-- fix caret jump from 10 to 11 lines

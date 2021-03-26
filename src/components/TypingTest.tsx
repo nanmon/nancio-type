@@ -55,11 +55,13 @@ function TypingTest() {
     return (line - 1) * config.lineHeight;
   }, [caretPosition, config]);
 
+  const threeLinesHeight = config.lineHeight * 3 + 10 // 10px padding
+
   return (
     <div className="TypingTest" style={{
       fontFamily: config.fontFamily,
       fontSize: config.fontSize + 'px',
-      lineHeight: (config.lineHeight - 2) + 'px', // 2px border bottom
+      lineHeight: (config.lineHeight - 1) + 'px', // 1px border bottom
     }}>
       <input 
         ref={inputRef}
@@ -72,7 +74,7 @@ function TypingTest() {
       <p style={{visibility: capslock ? "visible" : "hidden"}}>
         CAPSLOCK IS ACTIVE
       </p>
-      <div className="threeLines" style={{height: config.lineHeight * 3 + 'px'}}>
+      <div className="threeLines" style={{height: threeLinesHeight + 'px'}}>
         <div 
           className="words" 
           onClick={() => inputRef.current?.focus()}

@@ -2,6 +2,8 @@ import React from 'react';
 import reducer from '../reducers';
 import Screens from './Screens';
 
+export * from '../util/handlers';
+
 const StateContext = 
   React.createContext<Typer.State>(init({ text: '' })!);
 const DispatchContext = 
@@ -22,8 +24,8 @@ export function Typer({ content, onType }: Props) {
   const prevTyped = React.useRef<string | null>(null);
   React.useEffect(() => {
     if (!onType || prevTyped.current === state!.typed) return;
+    if (prevTyped.current !== null) onType(state!);
     prevTyped.current = state!.typed;
-    if (onType) onType(state!);
   }, [state, onType]);
 
   return (

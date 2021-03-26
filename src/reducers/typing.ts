@@ -1,3 +1,4 @@
+import { isDoneTyping } from '../util/handlers';
 import { compose, last } from '../util/std';
 import { getWords } from '../util/text';
 
@@ -89,7 +90,7 @@ function setTemp(
 }
 
 function setDone(state: Typer.State) {
-  if (doneTyping(state))
+  if (isDoneTyping(state))
     return {
       ...state,
       screen: 'stats'
@@ -126,7 +127,6 @@ function flushStats(
 ) {
   const pm = 1 / 60 * 5;
   const wpm = state.temp.count / pm;
-  if (wpm > 200) debugger;
   return {
     ...state,
     stats: {
@@ -141,14 +141,4 @@ function flushStats(
       errors: mistype(state, { char }) ? 1 : 0
     }
   };
-}
-
-function doneTyping({ typed, content }: Typer.State) {
-  const typedWords = getWords(typed);
-  const allWords = getWords(content.text);
-  if (typedWords.length < allWords.length) return false;
-  if (typed.endsWith(' ')) return true;
-  const lastTyped = typedWords.pop();
-  const lastWord = allWords.pop();
-  return lastTyped === lastWord;
 }

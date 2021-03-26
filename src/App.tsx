@@ -1,11 +1,11 @@
 import './App.css';
-import Quotes from './pages/quotes/Quotes';
+import Yoshi from './pages/yoshi/Yoshi';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Quotes/>
+        <Yoshi/>
       </header>
     </div>
   );

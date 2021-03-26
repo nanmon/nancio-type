@@ -1,36 +1,39 @@
 import React from 'react';
-import TypingTest from './TypingTest';
-import Stats from './Stats';
-import { useTyper, useTyperDispatch } from './StateProvider';
+import reducer from '../reducers';
+import Screens from './Screens';
+
+const StateContext = React.createContext<Typer.State>(init({ text: ''})!);
+const DispatchContext = 
+  React.createContext<React.Dispatch<Typer.Actions.Any> | null>(null);
 
 interface Props {
-  onNext(): void;
+  content: Typer.Content;
 }
 
-function Typer({ onNext }: Props) {
+export function Typer({ content }: Props) {
+  const [state, dispatch] = React.useReducer(reducer, null, () => init(content));
 
-  const [state, dispatch] = [useTyper(), useTyperDispatch()!];
-
-  function onType(e: React.KeyboardEvent<HTMLInputElement>) {
-    const char = e.key;
-    if (char.length === 1 || char === 'Backspace') {
-      dispatch({ type: 'typing', char, time: Date.now() });
-      return true;
-    }
-    return false;
-  }
+  React.useEffect(() => {
+    dispatch({type: 'init', content });
+  }, [content]);
 
   return (
-    <>
-      {state.screen === 'stats' 
-        ? <Stats state={state}/>
-        : <TypingTest
-            onType={onType}
-          />
-      }
-      <button onClick={onNext}>Next</button>
-    </>
+    <DispatchContext.Provider value={dispatch}>
+      <StateContext.Provider value={state!}>
+        <Screens/>
+      </StateContext.Provider>
+    </DispatchContext.Provider>
   );
 }
 
-export default Typer;
+export function useTyper() {
+  return React.useContext(StateContext);
+}
+
+export function useTyperDispatch() {
+  return React.useContext(DispatchContext)!;
+}
+
+function init(content: Typer.Content) {
+  return reducer(null, { type: 'init', content });
+}

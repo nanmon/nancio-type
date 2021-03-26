@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTyper } from "./StateProvider";
+import { useTyper } from "./Typer";
 
 interface Props {
   position: Typer.CaretPosition | null;

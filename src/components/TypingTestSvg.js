@@ -7,7 +7,7 @@ import {
   withExtra, 
   getWords 
 } from '../util/text'
-import { useTyper } from '../components/StateProvider'
+import { useTyper } from './Typer'
 
 function TypingText({ onType }) {
   const { content, typed, config } = useTyper();

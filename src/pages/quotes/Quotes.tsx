@@ -1,15 +1,15 @@
 import React from 'react';
-import Typer from '../../components/Typer';
-import { TyperProvider } from '../../components/StateProvider';
+import { Typer } from '../../components/Typer';
 const { quotes } = require('./quotes.json')
 
 function Quotes() {
   const [quote, setQuote] = React.useState(randomQuote);
 
   return (
-    <TyperProvider content={quote}>
-      <Typer onNext={() => setQuote(randomQuote())}/>
-    </TyperProvider>
+    <>
+      <Typer content={quote} />
+      <button onClick={() => setQuote(randomQuote())}>Next</button>
+    </>
   );
 }
 

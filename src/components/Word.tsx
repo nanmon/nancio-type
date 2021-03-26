@@ -1,5 +1,5 @@
 import Char from "./Char";
-import { useTyper } from "./StateProvider";
+import { useTyper } from "./Typer";
 import { tuplify } from "../util/std";
 import { getChars, getExtra, getWidth } from "../util/text";
 import '../styles/Word.css';

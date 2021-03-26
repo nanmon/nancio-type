@@ -1,18 +1,15 @@
 import React from 'react';
 import { tuplify } from '../util/std';
 import { getWords } from '../util/text'
-import { useTyper } from './StateProvider'
+import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
 import Word from './Word';
 import '../styles/TypingTest.css';
 import { useCaret } from '../hooks/typing-test';
 
-interface Props {
-  onType(e: React.KeyboardEvent<HTMLInputElement>): boolean;
-}
-
-function TypingTest({ onType }: Props) {
+function TypingTest() {
   const { content, typed, config } = useTyper();
+  const dispatch = useTyperDispatch();
 
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [inputHasFocus, setInputFocus] = React.useState(false);
@@ -32,9 +29,13 @@ function TypingTest({ onType }: Props) {
   )
 
   function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-    const prevent = onType(e);
-    if (prevent) e.preventDefault();
     capslockDetector(e);
+    const char = e.key;
+    if (char.length === 1 || char === 'Backspace') {
+      dispatch({ type: 'typing', char, time: Date.now() });
+      e.preventDefault();
+      return;
+    }
   }
 
   function capslockDetector(e: React.KeyboardEvent<HTMLInputElement>) {

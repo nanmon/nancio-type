@@ -76,7 +76,7 @@ function TypingTest() {
         <div 
           className="words" 
           onClick={() => inputRef.current?.focus()}
-          style={{ width: config.width, transform: `translateY(${-offset}px)`}}
+          style={{ maxWidth: config.width, transform: `translateY(${-offset}px)`}}
         >
           {_words.map(([text, typedWord, prevTyped, nextTyped], index) => 
             <Word

@@ -60,7 +60,6 @@ function TypingTest() {
       fontFamily: config.fontFamily,
       fontSize: config.fontSize + 'px',
       lineHeight: (config.lineHeight - 2) + 'px', // 2px border bottom
-      height: config.lineHeight * 3 + 'px'
     }}>
       <input 
         ref={inputRef}
@@ -70,21 +69,25 @@ function TypingTest() {
         onFocus={() => setInputFocus(true)}
         onBlur={() => setInputFocus(false)}
       />
-      {capslock && <p>CAPSLOCK IS ACTIVE</p>}
-      <div 
-        className="words" 
-        onClick={() => inputRef.current?.focus()}
-        style={{ width: config.width, transform: `translateY(${-offset}px)`}}
-      >
-        {_words.map(([text, typedWord, prevTyped, nextTyped], index) => 
-          <Word
-            key={index}
-            text={text} 
-            typed={typedWord}
-            current={isCurrent(typedWord, prevTyped, nextTyped)} 
-          />
-        )}
-        <Caret position={caretPosition} focused={inputHasFocus} />
+      <p style={{visibility: capslock ? "visible" : "hidden"}}>
+        CAPSLOCK IS ACTIVE
+      </p>
+      <div className="threeLines" style={{height: config.lineHeight * 3 + 'px'}}>
+        <div 
+          className="words" 
+          onClick={() => inputRef.current?.focus()}
+          style={{ width: config.width, transform: `translateY(${-offset}px)`}}
+        >
+          {_words.map(([text, typedWord, prevTyped, nextTyped], index) => 
+            <Word
+              key={index}
+              text={text} 
+              typed={typedWord}
+              current={isCurrent(typedWord, prevTyped, nextTyped)} 
+            />
+          )}
+          <Caret position={caretPosition} focused={inputHasFocus} />
+        </div>
       </div>
     </div>
   )

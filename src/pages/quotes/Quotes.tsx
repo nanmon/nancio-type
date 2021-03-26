@@ -1,25 +1,38 @@
 import React from 'react';
 import { Typer } from '../../components/Typer';
-const { quotes } = require('./quotes.json')
+
+const QUOTES_URL = process.env.REACT_APP_QUOTES_URL!;
 
 function Quotes() {
-  const [quote, setQuote] = React.useState(randomQuote);
+  const [quotes, setQuotes] = React.useState<Typer.Content[]>([]);
+  const [index, setIndex] = React.useState(-1);
+
+  React.useEffect(() => {
+    fetch(QUOTES_URL)
+      .then(r => r.json())
+      .then(({ quotes }) => {
+        setQuotes(quotes);
+        setIndex(rand(quotes.length));
+      });
+  }, [])
 
   const onType = React.useCallback(t => {
     // console.log(t);
-  }, [])
+  }, []);
+
+  if (index === -1) return <div>Loading...</div>;
 
   return (
     <>
-      <Typer content={quote} onType={onType}/>
-      <button onClick={() => setQuote(randomQuote())}>Next</button>
+      <Typer content={quotes[index]} onType={onType}/>
+      <button onClick={() => setIndex(rand(quotes.length))}>Next</button>
     </>
   );
 }
 
 export default Quotes;
 
-function randomQuote() {
-  const index = Math.floor(Math.random() * quotes.length);
-  return quotes[index]
+
+function rand(count: number) {
+  return Math.floor(Math.random() * count);
 }

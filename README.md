@@ -1,5 +1,4 @@
 # Run it
-First, [Steal the quotes file from monkeytype source code](https://raw.githubusercontent.com/Miodec/monkeytype/master/static/quotes/english.json) and put it on `src/pages/quotes/quotes.json`  
 ```
 npm install
 npm start
@@ -10,4 +9,4 @@ npm start
 - do not count space and backspaces for wpm
 - utils
 - memoize text utils
-- typescript
+- fix caret jump from 10 to 11 lines

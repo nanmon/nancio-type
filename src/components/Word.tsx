@@ -28,7 +28,13 @@ function Word({ text, typed, current }: Props) {
   ].filter(c => c).join(' ');
   const space = getWidth(' ', config);
   return (
-    <div className={className} style={{marginRight: space}}>
+    <div 
+      className={className} 
+      style={{
+        marginRight: space, 
+        borderBottomColor: redline ? config.colors.wrong : 'transparent'
+      }}
+    >
       {_chars.map(([text, typed], index) => 
         <Char 
           key={index}

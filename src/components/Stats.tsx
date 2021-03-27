@@ -1,18 +1,31 @@
 import React from 'react';
+import { ComposedChart, Line, Scatter, XAxis, YAxis, Tooltip } from 'recharts';
 import { netWpm, rawWpm } from '../util/handlers';
-import { tuplify } from '../util/std';
+import { avg, sum, tuplify } from '../util/std';
 import { getChars, getWords, getExtra } from '../util/text';
 import { useTyper } from './Typer';
 import '../styles/Stats.css';
 
 function Stats() {
   const state = useTyper();
-  const { stats, content, typed } = state;
+  const { stats, content, typed, config } = state;
   const acc = React.useMemo(() => {
     const total = getWords(content.text).join('').length;
     return (1 - stats.errors / total) * 100;
   }, [stats, content]);
+
   const counts = charCounts(content.text, typed);
+
+  const chartData = React.useMemo(() => {
+    return stats.wpm.map((val, index) => {
+      const raw = Math.round(avg(stats.wpm.slice(0, index + 1)));
+      const totalErrors = sum(stats.errs.slice(0, index + 1));
+      const wpm = raw - totalErrors * 60 / (index + 1);
+      const errors = stats.errs[index];
+      return {second: index + 1, wpm, raw: val, errors }
+    })
+  }, [stats]);
+
   return (
     <div className="Stats">
       <div className="wpm">
@@ -23,7 +36,22 @@ function Stats() {
         <h3>acc</h3>
         <h2>{Math.round(acc)}%</h2>
       </div>
-      <div className="chart"/>
+      <div className="chart">
+      <ComposedChart width={config.width} height={300} data={chartData}>
+        <Line type="monotone" yAxisId="wpm" dataKey="raw" stroke="darkred"/>
+        <Line type="monotone" yAxisId="wpm" dataKey="wpm" stroke="red"/>
+        <Scatter type="monotone" yAxisId="errors" dataKey="errors" stroke="gray"/>
+        <XAxis 
+          type="number" 
+          dataKey="second" 
+          tickCount={10}
+          domain={[1, 'dataMax']}
+        />
+        <YAxis yAxisId="wpm"/>
+        <YAxis yAxisId="errors" orientation="right"/>
+        <Tooltip/>
+      </ComposedChart>
+      </div>
       <div className="raw">
         <h3>raw</h3>
         <h2>{Math.round(rawWpm(state))}</h2>

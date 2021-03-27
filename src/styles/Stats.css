@@ -1,29 +1,31 @@
 .Stats {
   display: grid;
   font-family: monospace;
-  grid-template-areas: "wpm chart chart" "acc chart chart" "raw characters time"
+  grid-template-areas: "wpm chart chart" "acc chart chart" "raw chars time"
 }
 
 .Stats .wpm {
   grid-area: wpm;
 }
 
-.Stats .chart {
-  grid-area: chart;
-}
-
 .Stats .acc {
   grid-area: acc;
 }
 
-.Stats .raw {
-  grid-area: raw;
-  margin: 0 100px;
+.Stats .chart {
+  margin-top: 20px;
+  grid-area: chart;
 }
 
-.Stats .characters {
-  grid-area: characters;
-  margin: 0 100px;
+.Stats .raw {
+  grid-area: raw;
+  margin: 0 50px;
+}
+
+.Stats .chars {
+  grid-area: chars;
+  margin-left: 150px;
+  margin-right: 100px;
 }
 
 .Stats .time {

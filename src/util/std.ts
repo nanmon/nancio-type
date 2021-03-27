@@ -79,7 +79,10 @@ export const spread = (obj: {[k:string]: any} | any[], path: (string | number)[]
   }
 }
 
+export function sum(array: number[]) {
+  return array.reduce((s, v) => s + v, 0);
+}
 
 export function avg(array: number[]) {
-  return array.reduce((s, v) => s + v, 0) / array.length;
+  return sum(array) / array.length;
 }

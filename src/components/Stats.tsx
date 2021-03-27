@@ -1,3 +1,4 @@
+import React from 'react';
 import { netWpm, rawWpm } from '../util/handlers';
 import { tuplify } from '../util/std';
 import { getChars, getWords, getExtra } from '../util/text';
@@ -6,7 +7,10 @@ import { useTyper } from './Typer';
 function Stats() {
   const state = useTyper();
   const { stats, content, typed } = state;
-  const acc = (1 - stats.errors / content.text.length) * 100
+  const acc = React.useMemo(() => {
+    const total = getWords(content.text).join('').length;
+    return (1 - stats.errors / total) * 100;
+  }, [stats, content]);
   const counts = charCounts(content.text, typed);
   return (
     <>

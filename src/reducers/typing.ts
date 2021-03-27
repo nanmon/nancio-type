@@ -44,10 +44,11 @@ function setErrors(
   state: Typer.State, 
   action: Typer.Actions.Typing
 ) {
-  if (mistype(state, action))
+  const misses = mistypes(state, action)
+  if (misses > 0)
     return {
       ...state,
-      stats: { ...state.stats, errors: state.stats.errors + 1 }
+      stats: { ...state.stats, errors: state.stats.errors + misses }
     };
   return state;
 }
@@ -64,7 +65,7 @@ function setTemp(
         delta: 0,
         prevTime: time,
         count: ['', 'Backspace'].includes(char) ? 0 : 1,
-        errors: mistype(state, { char }) ? 1 : 0
+        errors: mistypes(state, { char })
       }
     }
   }
@@ -76,7 +77,7 @@ function setTemp(
         delta,
         prevTime: time,
         count: char === 'Backspace' ? temp.count : temp.count + 1,
-        errors: mistype(state, { char }) ? temp.errors + 1 : temp.errors
+        errors: temp.errors + mistypes(state, { char })
       }
     }
   }
@@ -98,11 +99,11 @@ function setDone(state: Typer.State) {
   return state;
 }
 
-function mistype(
+function mistypes(
   state: Typer.State, 
   { char }: Pick<Typer.Actions.Typing, 'char'>
 ) {
-  if (['', 'Backspace'].includes(char)) return false;
+  if (['', 'Backspace'].includes(char)) return 0;
 
   const { typed, content } = state;
   const wordsTyped = getWords(typed);
@@ -110,14 +111,17 @@ function mistype(
   const actualWord = getWords(content.text)[wordsTyped.length - 1];
 
   // it'd be like that sometimes
-  if (!actualWord) return false;
+  if (!actualWord) return 0;
 
-  if (typed.endsWith(' '))
-    return actualWord.length > lastWord.length;
+  if (typed.endsWith(' ')) {
+    // not extra, missing
+    const missing = actualWord.length - lastWord.length;
+    return missing > 0 ? missing : 0;
+  }
 
   const lastChar = lastWord[lastWord.length - 1];
   const actualChar = actualWord[lastWord.length - 1];
-  return actualChar !== lastChar;
+  return actualChar !== lastChar ? 1 : 0;
 }
 
 function flushStats(
@@ -138,7 +142,7 @@ function flushStats(
       delta: newDelta,
       prevTime: time,
       count: ['', 'Backspace'].includes(char) ? 0 : 1,
-      errors: mistype(state, { char }) ? 1 : 0
+      errors: mistypes(state, { char })
     }
   };
 }

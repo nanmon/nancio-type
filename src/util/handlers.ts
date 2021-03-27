@@ -1,4 +1,4 @@
-import { last, tuplify } from "./std";
+import { avg, last, tuplify } from "./std";
 import { getChars, getExtra, getWords } from "./text";
 
 export function didType(state: Typer.State, str: string) {
@@ -49,4 +49,31 @@ export function isDoneTyping({ typed, content }: Typer.State) {
   const lastTyped = typedWords.pop();
   const lastWord = allWords.pop();
   return lastTyped === lastWord;
+}
+
+export function netWpm(state: Typer.State) {
+  const { stats } = state;
+  return rawWpm(state) - unfixedErrors(state) * 60 / stats.wpm.length
+}
+
+export function rawWpm(state: Typer.State) {
+  return avg(state.stats.wpm);
+}
+
+export function unfixedErrors(state: Typer.State) {
+  let errors = 0;
+  tuplify(
+    getWords(state.content.text),
+    getWords(state.typed),
+  ).forEach(([word, typedWord]) => {
+    tuplify(
+      getChars(word),
+      getChars(typedWord)
+    ).forEach(([char, typedChar]) => {
+      if (char === typedChar) return;
+      errors++;
+    });
+    errors += getExtra(word).length;
+  });
+  return errors;
 }

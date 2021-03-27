@@ -1,6 +1,6 @@
 import React from 'react';
-import { Typer, lastWpm, isDoneTyping } from "../../components/Typer";
-import { avg, clamp } from '../../util/std';
+import { Typer, lastWpm, isDoneTyping, netWpm } from "../../components/Typer";
+import { clamp } from '../../util/std';
 const audios = [
   undefined,
   require('./audios/1.wav').default,
@@ -40,8 +40,8 @@ function Yoshi() {
   function onType(state: Typer.State) {
     if (timeoutId) clearTimeout(timeoutId);
     if (isDoneTyping(state)) {
-      const avgWpm = avg(state.stats.wpm);
-      const index = audioClamp(Math.floor(avgWpm / 15));
+      const net = netWpm(state);
+      const index = audioClamp(Math.floor(net / 15));
       setTrack(index);
       return;
     }

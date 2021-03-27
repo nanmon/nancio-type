@@ -1,16 +1,18 @@
-import { tuplify, avg } from '../util/std';
+import { netWpm, rawWpm } from '../util/handlers';
+import { tuplify } from '../util/std';
 import { getChars, getWords, getExtra } from '../util/text';
 import { useTyper } from './Typer';
 
 function Stats() {
-  const { stats, content, typed } = useTyper();
+  const state = useTyper();
+  const { stats, content, typed } = state;
   const acc = (1 - stats.errors / content.text.length) * 100
   const counts = charCounts(content.text, typed);
   return (
     <>
-      <p>Avg: {avg(stats.wpm)} wpm</p>
+      <p title="net/raw">Wpm: {Math.round(netWpm(state))}/{Math.round(rawWpm(state))}</p>
       <p>Time: {stats.wpm.length}s </p>
-      <p>Acc: {acc}%</p>
+      <p>Acc: {Math.round(acc)}%</p>
       <p title="correct/incorrect/extra/missing">Chars: {counts.correct}/{counts.incorrect}/{counts.extra}/{counts.missing}</p>
     </>
   )

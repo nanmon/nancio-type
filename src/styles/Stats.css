@@ -1,0 +1,40 @@
+.Stats {
+  display: grid;
+  font-family: monospace;
+  grid-template-areas: "wpm chart chart" "acc chart chart" "raw characters time"
+}
+
+.Stats .wpm {
+  grid-area: wpm;
+}
+
+.Stats .chart {
+  grid-area: chart;
+}
+
+.Stats .acc {
+  grid-area: acc;
+}
+
+.Stats .raw {
+  grid-area: raw;
+  margin: 0 100px;
+}
+
+.Stats .characters {
+  grid-area: characters;
+  margin: 0 100px;
+}
+
+.Stats .time {
+  grid-area: time;
+  margin: 0 100px;
+}
+
+.Stats h3 {
+  margin-bottom: 0;
+}
+
+.Stats h2, .Stats h3 {
+  margin-top: 0;
+}

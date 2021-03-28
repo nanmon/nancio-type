@@ -3,6 +3,7 @@ declare namespace Typer {
     content: Content;
     typed: string,
     screen: Screen,
+    timeline: TimelineItem[];
     stats: Stats,
     temp: {
       prevTime: number,
@@ -17,6 +18,12 @@ declare namespace Typer {
 
   interface Content {
     text: string;
+  }
+
+  interface TimelineItem {
+    timestamp: number;
+    typed: string;
+    char: string;
   }
 
   interface Stats {

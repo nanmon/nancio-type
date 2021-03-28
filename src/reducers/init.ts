@@ -19,6 +19,7 @@ export default function init(
       errors: 0,
       count: 0
     },
+    timeline: [],
     config: {
       fontFamily: 'monospace',
       fontSize: 24,

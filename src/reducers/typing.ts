@@ -7,6 +7,7 @@ const typing: (
   action: Typer.Actions.Typing
 ) => Typer.State =  compose(
   setTyped,
+  addToTimeline,
   setCount,
   setErrors,
   setTemp,
@@ -26,6 +27,23 @@ function setTyped(
     typed = typed.substr(0, typed.length - 1);
   else typed = typed + char;
   return { ...state, typed };
+}
+
+function addToTimeline(
+  state: Typer.State,
+  { char, time }: Typer.Actions.Typing
+) {
+  if (!state.typed) {
+    if (['', 'Backspace', ' '].includes(char)) return state;
+  }
+  if (char === ' ' && state.typed.endsWith(' ')) return state;
+  return {
+    ...state,
+    timeline: [
+      ...state.timeline,
+      { timestamp: time, char, typed: state.typed }
+    ]
+  };
 }
 
 function setCount(

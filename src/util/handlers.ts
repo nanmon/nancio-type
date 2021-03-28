@@ -63,17 +63,19 @@ export function rawWpm(state: Typer.State) {
 export function unfixedErrors(state: Typer.State) {
   let errors = 0;
   tuplify(
-    getWords(state.content.text),
     getWords(state.typed),
-  ).forEach(([word, typedWord]) => {
+    getWords(state.content.text),
+  ).forEach(([typedWord, word]) => {
+    if (word.length > typedWord.length) {
+      errors++; // all missings as one error
+    }
     tuplify(
+      getChars(typedWord),
       getChars(word),
-      getChars(typedWord)
-    ).forEach(([char, typedChar]) => {
+    ).forEach(([typedChar, char]) => {
       if (char === typedChar) return;
-      errors++;
+      errors++; // extras and incorrects
     });
-    errors += getExtra(word).length;
   });
   return errors;
 }

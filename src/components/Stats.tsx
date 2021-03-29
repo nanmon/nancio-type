@@ -1,7 +1,7 @@
 import React from 'react';
 import { ComposedChart, Line, Scatter, XAxis, YAxis, Tooltip } from 'recharts';
-import { netWpm, rawWpm } from '../util/handlers';
-import { avg, sum, tuplify } from '../util/std';
+import { groupTimeline, netWpm, rawWpm, mistypedLast } from '../util/handlers';
+import { avg, last, sum, tuplify } from '../util/std';
 import { getChars, getWords, getExtra } from '../util/text';
 import { useTyper } from './Typer';
 import '../styles/Stats.css';
@@ -17,13 +17,25 @@ function Stats() {
   const counts = charCounts(content.text, typed);
 
   const chartData = React.useMemo(() => {
-    return stats.wpm.map((val, index) => {
-      const raw = Math.round(avg(stats.wpm.slice(0, index + 1)));
-      const totalErrors = sum(stats.errs.slice(0, index + 1));
-      const wpm = raw - totalErrors * 60 / (index + 1);
-      const errors = stats.errs[index];
-      return {second: index + 1, wpm, raw: val, errors }
-    })
+    let timelineCount = 0;
+    const data = groupTimeline(state).map((timeline, index) => {
+      timelineCount += timeline.length;
+      const typed = last(timeline).typed;
+      const st = { typed, content, timeline };
+      const raw = Math.round(rawWpm(st));
+      st.timeline = state.timeline.slice(0, timelineCount);
+      const wpm = Math.round(netWpm(st));
+      const errors = timeline.reduce((errs, item) => {
+        return errs + Number(mistypedLast({
+          typed: item.typed,
+          content: st.content
+        }));
+      }, 0);
+      return { second: index + 1, wpm, raw, errors };
+    });
+    const time = (last(state.timeline).timestamp - state.timeline[0].timestamp) / 1000
+    last(data).second = time;
+    return data;
   }, [stats]);
 
   return (

@@ -1,6 +1,6 @@
 import { isDoneTyping } from '../util/handlers';
 import { compose, last } from '../util/std';
-import { getWords } from '../util/text';
+import { getWords, IGNORED_CHARACTERS } from '../util/text';
 
 const typing: (
   state: Typer.State, 
@@ -34,7 +34,7 @@ function addToTimeline(
   { char, time }: Typer.Actions.Typing
 ) {
   if (!state.typed) {
-    if (['', 'Backspace', ' '].includes(char)) return state;
+    if (IGNORED_CHARACTERS.includes(char)) return state;
   }
   if (char === ' ' && state.typed.endsWith(' ')) return state;
   return {
@@ -50,7 +50,7 @@ function setCount(
   state: Typer.State, 
   { char }: Typer.Actions.Typing
 ) {
-  if (['', 'Backspace'].includes(char)) 
+  if (IGNORED_CHARACTERS.includes(char)) 
     return state;
   return {
     ...state,
@@ -82,7 +82,7 @@ function setTemp(
       temp: {
         delta: 0,
         prevTime: time,
-        count: ['', 'Backspace'].includes(char) ? 0 : 1,
+        count: IGNORED_CHARACTERS.includes(char) ? 0 : 1,
         errors: mistypes(state, { char })
       }
     }
@@ -121,7 +121,7 @@ function mistypes(
   state: Typer.State, 
   { char }: Pick<Typer.Actions.Typing, 'char'>
 ) {
-  if (['', 'Backspace'].includes(char)) return 0;
+  if (IGNORED_CHARACTERS.includes(char)) return 0;
 
   const { typed, content } = state;
   const wordsTyped = getWords(typed);
@@ -159,7 +159,7 @@ function flushStats(
     temp: {
       delta: newDelta,
       prevTime: time,
-      count: ['', 'Backspace'].includes(char) ? 0 : 1,
+      count: IGNORED_CHARACTERS.includes(char) ? 0 : 1,
       errors: mistypes(state, { char })
     }
   };

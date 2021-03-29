@@ -1,5 +1,7 @@
 import { tuplify } from './std'
 
+export const IGNORED_CHARACTERS = ['', 'Backspace'];
+
 export const getWords = (text = '') => {
   return text.split(' ').filter(w => w);
 }

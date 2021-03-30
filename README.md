@@ -5,6 +5,4 @@ npm start
 ```
 
 ## TODO:
-- do not count space and backspaces for wpm
-- utils
-- memoize text utils
+- optimize TypingTest

@@ -33,7 +33,6 @@ function addToTimeline(
   if (!state.typed) {
     if (IGNORED_CHARACTERS.includes(char)) return state;
   }
-  if (char === ' ' && state.typed.endsWith(' ')) return state;
   return {
     ...state,
     timeline: [

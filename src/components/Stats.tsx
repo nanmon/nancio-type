@@ -98,7 +98,9 @@ function charCounts(text: string, typed: string) {
       else incorrect++;
     });
     getChars(getExtra(wtext, wtyped)).forEach(() => extras++);
-  })
+    correct++; // spaces
+  });
+  correct--; // does not end with space
   return {correct, incorrect, missing, extra: extras }
 }
 

@@ -1,6 +1,10 @@
 .TypingTest {
   position: relative;
+}
+
+.TypingTest .threeLines {  
   overflow: hidden;
+  padding-top: 20px;
 }
 
 .TypingTest .words {

@@ -6,13 +6,6 @@ export default function init(
     content: action.content,
     typed: '',
     screen: 'typing',
-    stats: {
-      count: 0, 
-      prevCount: 0, 
-      wpm: [], 
-      errors: 0,
-      errs: []
-    },
     temp: {
       prevTime: 0,
       delta: 0,

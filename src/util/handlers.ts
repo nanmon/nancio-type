@@ -38,7 +38,18 @@ export function wordStats(state: Typer.State, wordIndex: number) {
 }
 
 export function lastWpm(state: Typer.State) {
-  return last(state.stats.wpm);
+  if (state.timeline.length === 0) return 0;
+  const endTime = last(state.timeline).timestamp;
+  let slice = timeSlice(
+    state, 
+    endTime - 5000,
+    endTime + 1000,
+    false
+  );
+  if (slice.length === 0) return 0;
+  const typed = last(slice).typed;
+  const st = { typed, content: state.content, timeline: slice };
+  return rawWpm(st);
 }
 
 export function isDoneTyping({ typed, content }: Typer.State) {

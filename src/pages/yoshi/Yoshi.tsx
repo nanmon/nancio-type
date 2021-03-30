@@ -45,7 +45,7 @@ function Yoshi() {
       setTrack(index);
       return;
     }
-    const wpm = lastWpm(state) | 0;
+    const wpm = lastWpm(state);
     const index = audioClamp(Math.floor(wpm / 15));
     setTrack(index);
     refs.current.forEach(e => {

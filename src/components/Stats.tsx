@@ -8,19 +8,15 @@ import '../styles/Stats.css';
 
 function Stats() {
   const state = useTyper();
-  const { stats, content, typed, config } = state;
-  const acc = React.useMemo(() => {
-    const total = getWords(content.text).join('').length;
-    return (1 - stats.errors / total) * 100;
-  }, [stats, content]);
+  const { content, typed, config } = state;
 
   const counts = charCounts(content.text, typed);
+  const startTime = state.timeline[0].timestamp;
+  const duration = (last(state.timeline).timestamp - startTime) / 1000;
 
   const chartData = React.useMemo(() => {
-    const startTime = state.timeline[0].timestamp;
-    let time = (last(state.timeline).timestamp - startTime) / 1000;
     const data = Array
-      .from({ length: Math.round(time) })
+      .from({ length: Math.round(duration)  })
       .map((_, index) => {
         return { 
           second: index + 1, 
@@ -29,9 +25,17 @@ function Stats() {
           errors: errorPoint(state, index)
         };
       });
-    last(data).second = time;
+    last(data).second = duration;
     return data;
-  }, [state]);
+  }, [state, duration]);
+
+  const acc = React.useMemo(() => {
+    const total = getWords(content.text).join('').length;
+    const errors = chartData.reduce((sum, d) => (
+      d.errors ? sum + d.errors : sum
+    ), 0)
+    return (1 - errors / total) * 100;
+  }, [chartData, content]);
 
   return (
     <div className="Stats">
@@ -71,7 +75,7 @@ function Stats() {
       </div>
       <div className="time">
         <h3>time</h3>
-        <h2>{stats.wpm.length}s</h2>
+        <h2>{Math.round(duration)}s</h2>
       </div>
     </div>
   )

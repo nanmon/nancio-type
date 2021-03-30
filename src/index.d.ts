@@ -4,7 +4,6 @@ declare namespace Typer {
     typed: string,
     screen: Screen,
     timeline: TimelineItem[];
-    stats: Stats,
     temp: {
       prevTime: number,
       delta: number,
@@ -24,14 +23,6 @@ declare namespace Typer {
     timestamp: number;
     typed: string;
     char: string;
-  }
-
-  interface Stats {
-    count: number;
-    prevCount: number;
-    wpm: number[];
-    errors: number;
-    errs: number[];
   }
 
   interface Config {

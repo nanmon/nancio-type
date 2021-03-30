@@ -112,6 +112,7 @@ function slicePoint(state: Typer.State, second: number) {
     startTime + (second + 2) * 1000,
     false
   );
+  if (slice.length === 0) return 0;
   const typed = last(slice).typed;
   const st = { typed, content: state.content, timeline: slice };
   return Math.round(rawWpm(st));
@@ -125,6 +126,7 @@ function wpmPoint(state: Typer.State, second: number) {
     startTime + (second + 1) * 1000,
     true
   );
+  if (slice.length === 0) return 0;
   const typed = last(slice).typed;
   const st = { typed, content: state.content, timeline: slice };
   return Math.round(netWpm(st));
@@ -138,6 +140,7 @@ const startTime = state.timeline[0].timestamp;
     startTime + (second + 1) * 1000,
     false
   );
+  if (slice.length === 0) return null;
   return slice.reduce((errs, item) => {
     return errs + Number(mistypedLast({
       typed: item.typed,

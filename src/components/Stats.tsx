@@ -1,7 +1,7 @@
 import React from 'react';
-import { ComposedChart, Line, Scatter, XAxis, YAxis, Tooltip } from 'recharts';
-import { groupTimeline, netWpm, rawWpm, mistypedLast } from '../util/handlers';
-import { avg, last, sum, tuplify } from '../util/std';
+import { ComposedChart, Line, Scatter, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
+import { netWpm, rawWpm, mistypedLast, timeSlice } from '../util/handlers';
+import { last, tuplify } from '../util/std';
 import { getChars, getWords, getExtra } from '../util/text';
 import { useTyper } from './Typer';
 import '../styles/Stats.css';
@@ -17,26 +17,21 @@ function Stats() {
   const counts = charCounts(content.text, typed);
 
   const chartData = React.useMemo(() => {
-    let timelineCount = 0;
-    const data = groupTimeline(state).map((timeline, index) => {
-      timelineCount += timeline.length;
-      const typed = last(timeline).typed;
-      const st = { typed, content, timeline };
-      const raw = Math.round(rawWpm(st));
-      st.timeline = state.timeline.slice(0, timelineCount);
-      const wpm = Math.round(netWpm(st));
-      const errors = timeline.reduce((errs, item) => {
-        return errs + Number(mistypedLast({
-          typed: item.typed,
-          content: st.content
-        }));
-      }, 0);
-      return { second: index + 1, wpm, raw, errors };
-    });
-    const time = (last(state.timeline).timestamp - state.timeline[0].timestamp) / 1000
+    const startTime = state.timeline[0].timestamp;
+    let time = (last(state.timeline).timestamp - startTime) / 1000;
+    const data = Array
+      .from({ length: Math.round(time) })
+      .map((_, index) => {
+        return { 
+          second: index + 1, 
+          wpm: wpmPoint(state, index),
+          raw: slicePoint(state, index), 
+          errors: errorPoint(state, index)
+        };
+      });
     last(data).second = time;
     return data;
-  }, [stats]);
+  }, [state]);
 
   return (
     <div className="Stats">
@@ -49,20 +44,22 @@ function Stats() {
         <h2>{Math.round(acc)}%</h2>
       </div>
       <div className="chart">
-      <ComposedChart width={config.width} height={300} data={chartData}>
-        <Line type="monotone" yAxisId="wpm" dataKey="raw" stroke="darkred"/>
-        <Line type="monotone" yAxisId="wpm" dataKey="wpm" stroke="red"/>
-        <Scatter type="monotone" yAxisId="errors" dataKey="errors" stroke="gray"/>
-        <XAxis 
-          type="number" 
-          dataKey="second" 
-          tickCount={10}
-          domain={[1, 'dataMax']}
-        />
-        <YAxis yAxisId="wpm"/>
-        <YAxis yAxisId="errors" orientation="right"/>
-        <Tooltip/>
-      </ComposedChart>
+        <ComposedChart width={config.width} height={300} data={chartData}>
+          <Line type="monotone" yAxisId="wpm" dataKey="raw" stroke="darkred" fill="darkred"/>
+          <Line type="monotone" yAxisId="wpm" dataKey="wpm" stroke="red" fill="red"/>
+          <Scatter type="monotone" yAxisId="errors" dataKey="errors" stroke="black" fill="gray"/>
+          <CartesianGrid stroke="#fff3" strokeDasharray="5 5" />
+          <XAxis 
+            type="number" 
+            dataKey="second" 
+            tickCount={10}
+            domain={[1, 'dataMax']}
+            allowDecimals={false}
+          />
+          <YAxis yAxisId="wpm"/>
+          <YAxis yAxisId="errors" orientation="right" allowDecimals={false}/>
+          <Tooltip/>
+        </ComposedChart>
       </div>
       <div className="raw">
         <h3>raw</h3>
@@ -99,4 +96,46 @@ function charCounts(text: string, typed: string) {
     getChars(getExtra(wtext, wtyped)).forEach(() => extras++);
   })
   return {correct, incorrect, missing, extra: extras }
+}
+
+function slicePoint(state: Typer.State, second: number) {
+  const startTime = state.timeline[0].timestamp;
+  let slice = timeSlice(
+    state, 
+    startTime + (second - 1) * 1000,
+    startTime + (second + 2) * 1000,
+    false
+  );
+  const typed = last(slice).typed;
+  const st = { typed, content: state.content, timeline: slice };
+  return Math.round(rawWpm(st));
+}
+
+function wpmPoint(state: Typer.State, second: number) {
+  const startTime = state.timeline[0].timestamp;
+  let slice = timeSlice(
+    state, 
+    startTime,
+    startTime + (second + 1) * 1000,
+    true
+  );
+  const typed = last(slice).typed;
+  const st = { typed, content: state.content, timeline: slice };
+  return Math.round(netWpm(st));
+}
+
+function errorPoint(state: Typer.State, second: number) {
+const startTime = state.timeline[0].timestamp;
+  let slice = timeSlice(
+    state, 
+    startTime + second * 1000,
+    startTime + (second + 1) * 1000,
+    false
+  );
+  return slice.reduce((errs, item) => {
+    return errs + Number(mistypedLast({
+      typed: item.typed,
+      content: state.content
+    }));
+  }, 0) || null;
 }

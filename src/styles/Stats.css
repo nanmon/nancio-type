@@ -15,6 +15,7 @@
 .Stats .chart {
   margin-top: 20px;
   grid-area: chart;
+  color: black;
 }
 
 .Stats .raw {

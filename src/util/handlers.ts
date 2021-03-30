@@ -1,4 +1,4 @@
-import { avg, last, tuplify } from "./std";
+import { last, tuplify } from "./std";
 import { getChars, getExtra, getWords, IGNORED_CHARACTERS } from "./text";
 
 export function didType(state: Typer.State, str: string) {
@@ -109,7 +109,14 @@ export function groupTimeline(
       currentGroup = [];
     }
   });
-  if (currentGroup.length > 0) groups.push(currentGroup);
+  if (currentGroup.length > 0) {
+    const groupTime = last(currentGroup).timestamp - currentGroup[0].timestamp;
+    if (groupTime < groupMilis / 2) {
+      last(groups).push(...currentGroup);
+    } else {
+      groups.push(currentGroup);
+    }
+  }
   return groups;
 }
 
@@ -136,4 +143,21 @@ export function mistypedLast(
   const lastChar = lastWord[lastWord.length - 1];
   const actualChar = actualWord[lastWord.length - 1];
   return actualChar !== lastChar;
+}
+
+export function timeSlice(
+  state: Typer.State, 
+  from: number, 
+  to: number,
+  overtime: boolean = false
+) {
+  let start = state.timeline.findIndex(i => i.timestamp >= from);
+  let end = state.timeline.findIndex(i => i.timestamp >= to);
+  if (start === -1) start = 0;
+  if (end === -1) end = state.timeline.length - 1;
+  if (overtime) {
+    if (start > 0) start--;
+    if (end < state.timeline.length - 1) end++;
+  }
+  return state.timeline.slice(start, end);
 }

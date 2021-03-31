@@ -1,3 +1,4 @@
+import React from "react";
 import Char from "./Char";
 import { useTyper } from "./Typer";
 import { tuplify } from "../util/std";
@@ -10,7 +11,7 @@ interface Props {
   current: boolean;
 }
 
-function Word({ text, typed, current }: Props) {
+const Word = React.memo(function Word({ text, typed, current }: Props) {
   const { config } = useTyper();
   const _chars = tuplify(
     getChars(text),
@@ -44,6 +45,6 @@ function Word({ text, typed, current }: Props) {
       )}
     </div>
   );
-}
+});
 
 export default Word;

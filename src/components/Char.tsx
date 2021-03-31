@@ -6,7 +6,7 @@ interface Props {
   typed?: string;
 }
 
-function Char({ text, typed }: Props) {
+const Char = React.memo(function Char({ text, typed }: Props) {
   const { config } = useTyper();
   const code = React.useMemo(() => {
     if (!typed) return 'left';
@@ -20,6 +20,6 @@ function Char({ text, typed }: Props) {
   return (
     <span className={className} style={{color}}>{str}</span>
   );
-}
+});
 
 export default Char;

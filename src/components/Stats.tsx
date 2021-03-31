@@ -22,7 +22,8 @@ function Stats() {
           second: index + 1, 
           wpm: wpmPoint(state, index),
           raw: slicePoint(state, index), 
-          errors: errorPoint(state, index)
+          errors: errorPoint(state, index),
+          typed: typedPoint(state, index)
         };
       });
     last(data).second = duration;
@@ -133,7 +134,7 @@ function wpmPoint(state: Typer.State, second: number) {
 }
 
 function errorPoint(state: Typer.State, second: number) {
-const startTime = state.timeline[0].timestamp;
+  const startTime = state.timeline[0].timestamp;
   let slice = timeSlice(
     state, 
     startTime + second * 1000,
@@ -147,4 +148,16 @@ const startTime = state.timeline[0].timestamp;
       content: state.content
     }));
   }, 0) || null;
+}
+
+function typedPoint(state: Typer.State, second: number) {
+  const startTime = state.timeline[0].timestamp;
+  let slice = timeSlice(
+    state, 
+    startTime,
+    startTime + (second + 1) * 1000,
+    false
+  );
+  if (slice.length === 0) return '';
+  return last(slice).typed;
 }

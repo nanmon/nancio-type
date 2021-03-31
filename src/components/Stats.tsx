@@ -110,7 +110,7 @@ function slicePoint(state: Typer.State, second: number) {
     state, 
     startTime + (second - 1) * 1000,
     startTime + (second + 2) * 1000,
-    false
+    true
   );
   if (slice.length === 0) return 0;
   const typed = last(slice).typed;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { getCaretPosition, getLines, IGNORED_MODIFIERS } from '../util/text'
+import { getCaretPosition, getLines, getWidth, IGNORED_MODIFIERS } from '../util/text'
 import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
 import '../styles/TypingTest.css';
@@ -72,7 +72,10 @@ function TypingTest({ onKeyPress }: Props) {
       <p style={{visibility: capslock ? "visible" : "hidden"}}>
         CAPSLOCK IS ACTIVE
       </p>
-      <div className="threeLines" style={{height: threeLinesHeight + 'px'}}>
+      <div className="threeLines" style={{
+        height: threeLinesHeight + 'px',
+        width: config.width * getWidth('a', config)
+      }}>
         <div 
           className="words" 
           onClick={() => inputRef.current?.focus()}

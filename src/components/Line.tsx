@@ -9,7 +9,7 @@ interface Props {
   typed: string;
 }
 
-const Line = React.memo(function ({ text, typed }: Props) {
+const Line = React.memo(function Line({ text, typed }: Props) {
   const typedWords = getWords(typed);
   const words = zip(
     getWords(text),

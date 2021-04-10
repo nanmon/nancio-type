@@ -22,7 +22,7 @@ function Caret({ position, focused }: Props) {
   if (!position) return null;
   const [x, y] = position;
   const charWidth = getWidth('a', config);
-  const clampedY = y > 1 ? 1 : 0;
+  const clampedY = y ? 1 : 0;
   return (
     <span 
       className={className}

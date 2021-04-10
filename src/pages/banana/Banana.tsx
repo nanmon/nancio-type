@@ -80,8 +80,11 @@ function Banana() {
 
   function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!e.getModifierState('Control')) return false;
-    if (e.key === '1') buyBuilding(0);
-    if (e.key === '2') buyBuilding(1);
+    const building = state.buildings.find(b => {
+      return e.key === b.keybind;
+    });
+    if (!building) return true;
+    buyBuilding(building.id);
     return true;
   }
 

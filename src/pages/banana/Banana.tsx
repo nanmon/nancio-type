@@ -3,6 +3,7 @@ import randomWords from 'random-words';
 import last from 'lodash/last';
 import { lastWpm, mistypedLast, Typer } from '../../components/Typer';
 import { IGNORED_CHARACTERS } from '../../util/text';
+import useBanana from './reducer';
 import './Banana.css';
 
 const bananaFormatter = new Intl.NumberFormat('en-US', {
@@ -18,24 +19,17 @@ const wpmFormatter = new Intl.NumberFormat('en-US', {
 
 function Banana() {
   const [content, setContent] = React.useState(() => getContent());
-  const [bananas, setBananas] = React.useState(0);
-  const [typewritters, setTypewritters] = React.useState(0);
-  const [monkeys, setMonkeys] = React.useState(0);
+  const [state, dispatch] = useBanana();
   const [wps, setWps] = React.useState(0);
   const stateRef = React.useRef<Typer.State | null>(null);
-
-
-  const cps = React.useMemo(() => {
-    return typewritters * 0.1 + monkeys;
-  }, [typewritters, monkeys]);
 
   React.useEffect(() => {
     const fps = 20;
     const intervalId = setInterval(() => {
-      setBananas(b => b + cps / fps);
+      dispatch({ type: 'tick', timestamp: Date.now() });
     }, 1000 / fps);
     return () => clearInterval(intervalId);
-  }, [cps]);
+  }, [dispatch]);
 
   React.useEffect(() => {
     const intervalId = setInterval(() => {
@@ -63,48 +57,40 @@ function Banana() {
     const lastTime = last(state.timeline);
     if (!lastTime) return;
     const lastChar = lastTime.char;
-    if (IGNORED_CHARACTERS.includes(lastChar)) return;
-    if (mistypedLast(state)) return setBananas(b => b - 0.1);
-    setBananas(b => b + 0.2);
+
+    if (IGNORED_CHARACTERS.includes(lastChar))
+      dispatch({ type: 'typed', char: 'ignored' });
+    else if (mistypedLast(state)) 
+      dispatch({ type: 'typed', char: 'mistyped'});
+    else
+      dispatch({ type: 'typed', char: 'correct' });
   }
 
   function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
     if (!e.getModifierState('Control')) return false;
-    if (e.key === '1') buyTypewritter();
-    if (e.key === '2') buyMonkey();
+    if (e.key === '1') buyBuilding(0);
+    if (e.key === '2') buyBuilding(1);
     return true;
   }
 
-  const costs = {
-    typewritter: Math.ceil(15 * (1.15 ** typewritters)),
-    monkey: Math.ceil(100 * (1.15 ** monkeys))
-  }
-
-  function buyTypewritter() {
-    const price = costs.typewritter;
-    if (bananas < price) return;
-    setBananas(b => b - price);
-    setTypewritters(t => t + 1);
-  }
-
-  function buyMonkey() {
-    const price = costs.monkey;
-    if (bananas < price) return;
-    setBananas(b => b - price);
-    setMonkeys(m => m + 1);
+  function buyBuilding(id: number) {
+    dispatch({ type: 'buyBuilding', buildingId: id });
   }
 
   return (
     <div className="Cookie">
-      <p>bananas: {bananaFormatter.format(bananas)}</p>
-      <p>bps: {bananaFormatter.format(cps)} + {bananaFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
+      <p>bananas: {bananaFormatter.format(state.bananas)}</p>
+      <p>bps: {bananaFormatter.format(state.bps)} + {bananaFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
       <Typer content={content} onType={onType} onKeyPress={onKeyPress}/>
-      <button disabled={bananas < costs.typewritter} onClick={buyTypewritter}>
-        {typewritters} typewritters, press ctrl + 1 buy one for {costs.typewritter} bananas
-      </button>
-      <button disabled={bananas < costs.monkey} onClick={buyMonkey}>
-        {monkeys} monkes, press ctrl + 2 to buy one for {costs.monkey} bananas
-      </button>
+      {state.buildings.map(building =>
+        <button 
+          key={building.id}
+          disabled={state.bananas < building.price} 
+          onClick={() => buyBuilding(building.id)}
+        >
+          {building.owned} {building.name}s, press ctrl + {building.keybind} to buy one for {Math.round(building.price)} bananas
+        </button>
+      )}
     </div>
   )
 }

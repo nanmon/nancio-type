@@ -22,6 +22,7 @@ function Caret({ position, focused }: Props) {
   if (!position) return null;
   const [x, y] = position;
   const charWidth = getWidth('a', config);
+  const clampedY = y > 1 ? 1 : 0;
   return (
     <span 
       className={className}
@@ -29,7 +30,7 @@ function Caret({ position, focused }: Props) {
         position: 'absolute', 
         top: 0, 
         left: 0, 
-        transform: `translate(${x * charWidth + 3}px, ${y * config.lineHeight + 5}px)`,
+        transform: `translate(${x * charWidth + 3}px, ${clampedY * config.lineHeight + 5}px)`,
         color: config.colors.caret,
         visibility: focused ? 'visible' : 'hidden'
       }}

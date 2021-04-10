@@ -1,6 +1,5 @@
 import React from 'react';
-import zip from 'lodash/zip';
-import { getCaretPosition, getLines, getWords, IGNORED_MODIFIERS } from '../util/text'
+import { getCaretPosition, getLines, IGNORED_MODIFIERS } from '../util/text'
 import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
 import '../styles/TypingTest.css';
@@ -22,7 +21,6 @@ function TypingTest({ onKeyPress }: Props) {
     inputRef.current?.focus();
   }, [content.text]);
 
-  
   const lines = React.useMemo(() => {
    return getLines(content.text, typed, config); 
   }, [typed, content, config]);
@@ -50,12 +48,10 @@ function TypingTest({ onKeyPress }: Props) {
     setCapslock(e.getModifierState('CapsLock'));
   }
 
-  const offset = React.useMemo(() => {
-    if (!caret) return 0;
-    const line = caret[1]
-    if (line < 1) return 0
-    return (line - 1) * config.lineHeight;
-  }, [caret, config]);
+  const drawingLines = React.useMemo(() => {
+    if (caret[1] < 2) return lines.slice(0, 3);
+    return lines.slice(caret[1] - 1, caret[1] + 2);
+  }, [lines, caret]);
 
   const threeLinesHeight = config.lineHeight * 3 + 10 // 10px padding
 
@@ -80,11 +76,11 @@ function TypingTest({ onKeyPress }: Props) {
         <div 
           className="words" 
           onClick={() => inputRef.current?.focus()}
-          style={{ transform: `translateY(${-offset}px)`}}
+          style={{ transform: `translateY(0px)`}}
         >
-          {lines.map(([text, typed], index) => 
+          {drawingLines.map(([text, typed]) => 
             text && <Line
-              key={index}
+              key={text}
               text={text} 
               typed={typed}
             />
@@ -93,7 +89,7 @@ function TypingTest({ onKeyPress }: Props) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default TypingTest;

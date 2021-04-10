@@ -2,7 +2,7 @@ import React from 'react';
 import randomWords from 'random-words';
 import last from 'lodash/last';
 import { lastWpm, mistypedLast, Typer } from '../../components/Typer';
-import { IGNORED_CHARACTERS } from '../../util/text';
+import { getLines, IGNORED_CHARACTERS } from '../../util/text';
 import useBanana from './reducer';
 import './Banana.css';
 
@@ -18,6 +18,7 @@ const wpmFormatter = new Intl.NumberFormat('en-US', {
 });
 
 function Banana() {
+  const [typed, setTyped] = React.useState('');
   const [content, setContent] = React.useState(() => getContent());
   const [state, dispatch] = useBanana();
   const [wps, setWps] = React.useState(0);
@@ -46,14 +47,25 @@ function Banana() {
   }, []);
 
   React.useEffect(() => {
-    const intervalId = setInterval(() => {
-      setContent(getContent());
-    }, 1000 * 60);
-    return () => clearInterval(intervalId);
-  }, []);
+    if (typed.length < 500) return;
+    console.log('remove first lines')
+    const lines = getLines(content.text, typed, stateRef.current!.config);
+    lines.splice(0, 2); // remove first 2 lines
+    setTyped(() => {
+      let t = lines.map(([_, t]) => t).join(' ').trim();
+      if (typed.endsWith(' ')) t += ' ';
+      return t;
+    });
+    setContent(() => {
+      let t = lines.map(([t]) => t).join(' ');
+      t += ' ' + randomWords({ exactly: 50, join: ' '});
+      return { text: t };
+    });
+  }, [typed, content]);
 
   function onType(state: Typer.State) {
     stateRef.current = state;
+    setTyped(state.typed);
     const lastTime = last(state.timeline);
     if (!lastTime) return;
     const lastChar = lastTime.char;
@@ -81,7 +93,13 @@ function Banana() {
     <div className="Banana">
       <p>bananas: {bananaFormatter.format(state.bananas)}</p>
       <p>bps: {bananaFormatter.format(state.bps)} + {bananaFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
-      <Typer content={content} onType={onType} onKeyPress={onKeyPress}/>
+      <Typer
+        typed={typed}
+        content={content} 
+        onType={onType} 
+        onKeyPress={onKeyPress}
+        restartOnContentChange={false}
+      />
       {state.buildings.map(building =>
         <button 
           key={building.id}
@@ -99,6 +117,6 @@ export default Banana;
 
 function getContent() {
   return {
-    text: randomWords({ exactly: 200, join: ' ' })
+    text: randomWords({ exactly: 100, join: ' ' })
   }
 }

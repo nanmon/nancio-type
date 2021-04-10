@@ -9,8 +9,8 @@ function merge(state: Typer.State, action: Typer.Actions.Merge): Typer.State {
   });
   if (!diff) return state;
   return {
-    ...action.state,
     ...state,
+    ...action.state,
   }
 }
 

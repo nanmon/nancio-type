@@ -1,6 +1,6 @@
 import React from 'react';
 import zip from 'lodash/zip';
-import { getCaretPosition, getWords, IGNORED_MODIFIERS } from '../util/text'
+import { getCaretPosition, getLines, getWords, IGNORED_MODIFIERS } from '../util/text'
 import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
 import '../styles/TypingTest.css';
@@ -24,32 +24,8 @@ function TypingTest({ onKeyPress }: Props) {
 
   
   const lines = React.useMemo(() => {
-    const typedWords = getWords(typed)
-    const words = zip(
-      getWords(content.text),
-      typedWords,
-      [undefined, ...typedWords],
-      typedWords.slice(1)
-    )
-    let currentLength = 0;
-    let currentLine: [string, string] = ['', '']
-    const lines: [string, string][] = [];
-    words.forEach(([word, typed]) => {
-      if (!word) return;
-      let wlength = word.length;
-      if (typed && typed.length > word.length) wlength = typed.length;
-      if (currentLength + 1 + wlength > config.width) {
-        currentLength = wlength;
-        lines.push(currentLine);
-        currentLine = [word, typed || '']
-      } else {
-        currentLength += 1 + wlength;
-        currentLine[0] += ' ' + word;
-        if (typed) currentLine[1] += ' ' + typed;
-      }
-    });
-    return lines;
-  }, [typed, content, config.width]);
+   return getLines(content.text, typed, config); 
+  }, [typed, content, config]);
 
   const caret = React.useMemo(() => {
     return getCaretPosition(lines.map(([t]) => t), typed);

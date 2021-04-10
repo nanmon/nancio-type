@@ -35,6 +35,36 @@ export const getWidth = (
   return context!.measureText(text).width;
 }
 
+export const getLines = (
+  text: string, 
+  typed: string, 
+  { width }: { width: number }
+) => {
+  const typedWords = getWords(typed)
+  const words = zip(
+    getWords(text),
+    typedWords,
+  )
+  let currentLength = 0;
+  let currentLine: [string, string] = ['', '']
+  const lines: [string, string][] = [];
+  words.forEach(([word, typed]) => {
+    if (!word) return;
+    let wlength = word.length;
+    if (typed && typed.length > word.length) wlength = typed.length;
+    if (currentLength + 1 + wlength > width) {
+      currentLength = wlength;
+      lines.push(currentLine);
+      currentLine = [word, typed || '']
+    } else {
+      currentLength += 1 + wlength;
+      currentLine[0] += ' ' + word;
+      if (typed) currentLine[1] += ' ' + typed;
+    }
+  });
+  return lines;
+}
+
 export const getCaretPosition = (lines: string[], typed: string): [number, number] => {
   const words = getWords(typed);
   let wcount = 0;

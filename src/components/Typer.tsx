@@ -14,9 +14,16 @@ interface Props {
   content: Typer.Content;
   restartOnContentChange?: boolean
   onType?(state: Typer.State): void;
+  onKeyPress?(e: React.KeyboardEvent<HTMLInputElement>): boolean
 }
 
-export function Typer({ typed, content, onType, restartOnContentChange = true }: Props) {
+export function Typer({ 
+  typed, 
+  content, 
+  onType,
+  onKeyPress = () => false,
+  restartOnContentChange = true 
+}: Props) {
   const [state, dispatch] = React.useReducer(reducer, null, () => init(content));
 
   React.useEffect(() => {
@@ -37,7 +44,7 @@ export function Typer({ typed, content, onType, restartOnContentChange = true }:
   return (
     <DispatchContext.Provider value={dispatch}>
       <StateContext.Provider value={state!}>
-        <Screens/>
+        <Screens onKeyPress={onKeyPress}/>
       </StateContext.Provider>
     </DispatchContext.Provider>
   );

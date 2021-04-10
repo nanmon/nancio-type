@@ -1,6 +1,7 @@
 import zip from 'lodash/zip';
 
 export const IGNORED_CHARACTERS = ['', 'Backspace'];
+export const IGNORED_MODIFIERS = ['Alt', 'AltGraph', 'Control', 'Fn', 'Meta', 'OS']
 
 export const getWords = (text = '') => {
   return text.split(' ').filter(w => w);

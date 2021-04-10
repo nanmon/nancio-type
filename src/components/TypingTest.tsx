@@ -1,13 +1,17 @@
 import React from 'react';
 import zip from 'lodash/zip';
-import { getWords } from '../util/text'
+import { getWords, IGNORED_MODIFIERS } from '../util/text'
 import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
 import Word from './Word';
 import '../styles/TypingTest.css';
 import { useCaret } from '../hooks/typing-test';
 
-function TypingTest() {
+interface Props {
+  onKeyPress(e: React.KeyboardEvent<HTMLInputElement>): boolean;
+}
+
+function TypingTest({ onKeyPress }: Props) {
   const { content, typed, config } = useTyper();
   const dispatch = useTyperDispatch();
 
@@ -28,9 +32,14 @@ function TypingTest() {
     typedWords.slice(1)
   )
 
-  function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
+  function keyPressed(e: React.KeyboardEvent<HTMLInputElement>) {
     capslockDetector(e);
+    if (onKeyPress(e)) return;
     const char = e.key;
+    const ignore = IGNORED_MODIFIERS.some(mod => {
+      return e.getModifierState(mod);
+    })
+    if (ignore) return;
     if (char.length === 1 || char === 'Backspace') {
       dispatch({ type: 'typing', char, time: Date.now() });
       e.preventDefault();
@@ -65,7 +74,7 @@ function TypingTest() {
     }}>
       <input 
         ref={inputRef}
-        onKeyDown={onKeyPress}
+        onKeyDown={keyPressed}
         onKeyUp={capslockDetector}
         style={{height: 0, padding: 0, border: 0, position: "absolute"}}
         onFocus={() => setInputFocus(true)}

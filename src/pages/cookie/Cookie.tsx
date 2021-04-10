@@ -68,6 +68,13 @@ function Cookie() {
     setCookies(c => c + 0.2);
   }
 
+  function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!e.getModifierState('Control')) return false;
+    if (e.key === '1') buyTypewritter();
+    if (e.key === '2') buyMonkey();
+    return true;
+  }
+
   const costs = {
     typewritter: Math.ceil(15 * (1.15 ** typewritters)),
     monkey: Math.ceil(100 * (1.15 ** monkeys))
@@ -75,12 +82,14 @@ function Cookie() {
 
   function buyTypewritter() {
     const price = costs.typewritter;
+    if (cookies < price) return;
     setCookies(c => c - price);
     setTypewritters(t => t + 1);
   }
 
   function buyMonkey() {
     const price = costs.monkey;
+    if (cookies < price) return;
     setCookies(c => c - price);
     setMonkeys(m => m + 1);
   }
@@ -89,12 +98,12 @@ function Cookie() {
     <div className="Cookie">
       <p>bananas: {cookieFormatter.format(cookies)}</p>
       <p>bps: {cookieFormatter.format(cps)} + {cookieFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
-      <Typer content={content} onType={onType}/>
+      <Typer content={content} onType={onType} onKeyPress={onKeyPress}/>
       <button disabled={cookies < costs.typewritter} onClick={buyTypewritter}>
-        {typewritters} typewritters, buy one for {costs.typewritter} bananas
+        {typewritters} typewritters, press ctrl + 1 buy one for {costs.typewritter} bananas
       </button>
       <button disabled={cookies < costs.monkey} onClick={buyMonkey}>
-        {monkeys} monkes, buy one for {costs.monkey} bananas
+        {monkeys} monkes, press ctrl + 2 to buy one for {costs.monkey} bananas
       </button>
     </div>
   )

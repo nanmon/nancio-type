@@ -1,6 +1,6 @@
 import React from 'react';
+import clamp from 'lodash/clamp';
 import { Typer, lastWpm, isDoneTyping, netWpm } from "../../components/Typer";
-import { clamp } from '../../util/std';
 const audios = [
   undefined,
   require('./audios/1.wav').default,
@@ -12,7 +12,7 @@ const audios = [
   require('./audios/7.wav').default,
 ]
 
-const audioClamp = clamp(1, audios.length - 1);
+// const audioClamp = clamp(1, audios.length - 1);
 
 function Yoshi() {
   const [content, setContent] = 
@@ -41,12 +41,12 @@ function Yoshi() {
     if (timeoutId) clearTimeout(timeoutId);
     if (isDoneTyping(state)) {
       const net = netWpm(state);
-      const index = audioClamp(Math.floor(net / 15));
+      const index = clamp(Math.floor(net / 15), 1, audios.length - 1);
       setTrack(index);
       return;
     }
     const wpm = lastWpm(state);
-    const index = audioClamp(Math.floor(wpm / 15));
+    const index = clamp(Math.floor(wpm / 15), 1, audios.length - 1);
     setTrack(index);
     refs.current.forEach(e => {
       e.play();

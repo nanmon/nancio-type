@@ -1,5 +1,5 @@
 import React from 'react';
-import { last } from '../util/std';
+import last from 'lodash/last';
 
 export function useCaret(typed: string, config: Typer.Config) {
   const [pos, setPos] = React.useState<Typer.CaretPosition | null>(null);
@@ -18,7 +18,7 @@ export function useCaret(typed: string, config: Typer.Config) {
       });
       return;
     }
-    const char = last(charsTyped);
+    const char = last(charsTyped)!;
     const rect = char.getBoundingClientRect();
     setPos({
       x: rect.right - originRect.left,

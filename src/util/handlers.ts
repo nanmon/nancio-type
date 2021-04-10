@@ -1,4 +1,5 @@
-import { last, tuplify } from "./std";
+import zip from 'lodash/zip';
+import last from 'lodash/last'
 import { getChars, getExtra, getWords, IGNORED_CHARACTERS } from "./text";
 
 export function didType(state: Typer.State, str: string) {
@@ -22,7 +23,7 @@ export function wordStats(state: Typer.State, wordIndex: number) {
     stats.left = word.length;
     return stats;
   }
-  tuplify(
+  zip(
     getChars(word),
     getChars(typedWord),
   ).forEach(([char, typedChar]) => {
@@ -39,7 +40,7 @@ export function wordStats(state: Typer.State, wordIndex: number) {
 
 export function lastWpm(state: Typer.State, milis = 5000) {
   if (state.timeline.length === 0) return 0;
-  const endTime = last(state.timeline).timestamp;
+  const endTime = last(state.timeline)!.timestamp;
   let slice = timeSlice(
     state, 
     endTime - milis,
@@ -47,7 +48,7 @@ export function lastWpm(state: Typer.State, milis = 5000) {
     false
   );
   if (slice.length === 0) return 0;
-  const typed = last(slice).typed;
+  const typed = last(slice)!.typed;
   const st = { typed, content: state.content, timeline: slice };
   return rawWpm(st);
 }
@@ -77,20 +78,22 @@ export function typedCount(state: Pick<Typer.State, 'timeline'>) {
 }
 
 export function typedMilis(state: Pick<Typer.State, 'timeline'>) {
-  return last(state.timeline).timestamp - state.timeline[0].timestamp;
+  if (state.timeline.length === 0) return 0;
+  return last(state.timeline)!.timestamp - state.timeline[0].timestamp;
 }
 
 export function unfixedErrors(state: Pick<Typer.State, 'typed' | 'content'>) {
   let errors = 0;
   const typedWords = getWords(state.typed);
-  tuplify(
+  zip(
     typedWords,
     getWords(state.content.text),
   ).forEach(([typedWord, word], index) => {
-    if (index < typedWords.length -1 && word.length > typedWord.length) {
+    if (!word) return; // should not happen
+    if (index < typedWords.length -1 && word.length > typedWord!.length) {
       errors++; // all missings as one error
     }
-    tuplify(
+    zip(
       getChars(typedWord),
       getChars(word),
     ).forEach(([typedChar, char]) => {
@@ -121,9 +124,9 @@ export function groupTimeline(
     }
   });
   if (currentGroup.length > 0) {
-    const groupTime = last(currentGroup).timestamp - currentGroup[0].timestamp;
-    if (groupTime < groupMilis / 2) {
-      last(groups).push(...currentGroup);
+    const groupTime = last(currentGroup)!.timestamp - currentGroup[0].timestamp;
+    if (groupTime < groupMilis / 2 && groups.length > 0) {
+      last(groups)!.push(...currentGroup);
     } else {
       groups.push(currentGroup);
     }
@@ -135,11 +138,12 @@ export function mistypedLast(
   state: Pick<Typer.State, 'typed' | 'content'>
 ) {
   const { typed, content } = state;
-  const char = last(typed);
+  if (!typed) return false;
+  const char = last(typed)!;
   if (IGNORED_CHARACTERS.includes(char)) return false;
 
   const wordsTyped = getWords(typed);
-  const lastWord = last(wordsTyped);
+  const lastWord = last(wordsTyped)!;
   const actualWord = getWords(content.text)[wordsTyped.length - 1];
 
   // it'd be like that sometimes

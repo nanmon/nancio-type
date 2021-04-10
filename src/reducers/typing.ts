@@ -1,15 +1,14 @@
 import { isDoneTyping } from '../util/handlers';
-import { compose } from '../util/std';
 import { IGNORED_CHARACTERS } from '../util/text';
 
-const typing: (
+const typing = (
   state: Typer.State, 
   action: Typer.Actions.Typing
-) => Typer.State =  compose(
-  setTyped,
-  addToTimeline,
-  setDone
-);
+) => {
+  let newState = setTyped(state, action);
+  newState = addToTimeline(newState, action);
+  return setDone(newState);
+}
 
 export default typing;
 

@@ -1,26 +1,22 @@
 import React from "react";
+import zip from 'lodash/zip';
 import Char from "./Char";
 import { useTyper } from "./Typer";
-import { tuplify } from "../util/std";
-import { getChars, getExtra, getWidth } from "../util/text";
+import { getChars, getWidth } from "../util/text";
 import '../styles/Word.css';
 
 interface Props {
   text: string;
-  typed: string;
+  typed?: string;
   current: boolean;
 }
 
 const Word = React.memo(function Word({ text, typed, current }: Props) {
   const { config } = useTyper();
-  const _chars = tuplify(
+  const _chars = zip(
     getChars(text),
     getChars(typed),
   );
-  const extraStr = getExtra(text, typed);
-  getChars(extraStr).forEach(char => {
-    _chars.push([null, char]);
-  });
   const redline = !current && typed && text !== typed;
   const className = [
     "Word", 

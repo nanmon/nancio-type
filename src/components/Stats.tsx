@@ -1,8 +1,9 @@
 import React from 'react';
+import last from 'lodash/last';
+import zip from 'lodash/zip';
 import { ComposedChart, Line, Scatter, CartesianGrid, XAxis, YAxis, Tooltip } from 'recharts';
 import { netWpm, rawWpm, mistypedLast, timeSlice } from '../util/handlers';
-import { last, tuplify } from '../util/std';
-import { getChars, getWords, getExtra } from '../util/text';
+import { getChars, getWords } from '../util/text';
 import { useTyper } from './Typer';
 import '../styles/Stats.css';
 
@@ -12,7 +13,7 @@ function Stats() {
 
   const counts = charCounts(content.text, typed);
   const startTime = state.timeline[0].timestamp;
-  const duration = (last(state.timeline).timestamp - startTime) / 1000;
+  const duration = (last(state.timeline)!.timestamp - startTime) / 1000;
 
   const chartData = React.useMemo(() => {
     const data = Array
@@ -26,7 +27,7 @@ function Stats() {
           typed: typedPoint(state, index)
         };
       });
-    last(data).second = duration;
+    last(data)!.second = duration;
     return data;
   }, [state, duration]);
 
@@ -86,19 +87,19 @@ export default Stats;
 
 function charCounts(text: string, typed: string) {
   let correct = 0, incorrect = 0, missing = 0, extras = 0
-  tuplify(
+  zip(
     getWords(text),
     getWords(typed)
   ).forEach(([wtext, wtyped]) => {
-    tuplify(
+    zip(
       getChars(wtext),
       getChars(wtyped)
     ).forEach(([chtext, chtyped]) => {
+      if (!chtext) extras++;
       if (!chtyped) missing++;
       else if (chtext === chtyped) correct++;
       else incorrect++;
     });
-    getChars(getExtra(wtext, wtyped)).forEach(() => extras++);
     correct++; // spaces
   });
   correct--; // does not end with space
@@ -114,7 +115,7 @@ function slicePoint(state: Typer.State, second: number) {
     true
   );
   if (slice.length === 0) return 0;
-  const typed = last(slice).typed;
+  const typed = last(slice)!.typed;
   const st = { typed, content: state.content, timeline: slice };
   return Math.round(rawWpm(st));
 }
@@ -128,7 +129,7 @@ function wpmPoint(state: Typer.State, second: number) {
     true
   );
   if (slice.length === 0) return 0;
-  const typed = last(slice).typed;
+  const typed = last(slice)!.typed;
   const st = { typed, content: state.content, timeline: slice };
   return Math.round(netWpm(st));
 }
@@ -159,5 +160,5 @@ function typedPoint(state: Typer.State, second: number) {
     false
   );
   if (slice.length === 0) return '';
-  return last(slice).typed;
+  return last(slice)!.typed;
 }

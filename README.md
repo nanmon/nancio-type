@@ -5,7 +5,6 @@ npm start
 ```
 
 ## TODO:
-- delete std.ts, use a real std lib
 - optimize TypingTest
 - restartOnContentChange prop
 - controlled typed

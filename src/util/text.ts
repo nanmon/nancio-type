@@ -1,4 +1,4 @@
-import { tuplify } from './std'
+import zip from 'lodash/zip';
 
 export const IGNORED_CHARACTERS = ['', 'Backspace'];
 
@@ -19,8 +19,8 @@ export const getExtra = (text: string, typed = '') => {
 export const withExtra = (text: string, typed: string) => {
   const wtext = getWords(text);
   const wtyped = getWords(typed);
-  return tuplify(wtext, wtyped).map(([text, typed]) => {
-    return text + getExtra(text, typed);
+  return zip(wtext, wtyped).map(([text, typed]) => {
+    return text + getExtra(text!, typed);
   }).join(' ');
 }
 

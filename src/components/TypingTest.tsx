@@ -1,5 +1,5 @@
 import React from 'react';
-import { tuplify } from '../util/std';
+import zip from 'lodash/zip';
 import { getWords } from '../util/text'
 import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
@@ -21,10 +21,10 @@ function TypingTest() {
   }, [content.text]);
 
   const typedWords = getWords(typed)
-  const _words = tuplify(
+  const _words = zip(
     getWords(content.text),
     typedWords,
-    [null, ...typedWords],
+    [undefined, ...typedWords],
     typedWords.slice(1)
   )
 
@@ -42,7 +42,7 @@ function TypingTest() {
     setCapslock(e.getModifierState('CapsLock'));
   }
 
-  function isCurrent(word: string, prev: string, next: string) {
+  function isCurrent(word?: string, prev?: string, next?: string) {
     if (!typed && !prev) return true;
     if (typed.endsWith(' ')) return prev != null && word == null;
     return word != null && next == null;
@@ -81,7 +81,7 @@ function TypingTest() {
           style={{ maxWidth: config.width, transform: `translateY(${-offset}px)`}}
         >
           {_words.map(([text, typedWord, prevTyped, nextTyped], index) => 
-            <Word
+            text && <Word
               key={index}
               text={text} 
               typed={typedWord}

@@ -1,8 +1,8 @@
 import React from 'react';
-import randomWords from 'random-words'
+import randomWords from 'random-words';
+import last from 'lodash/last';
 import { lastWpm, mistypedLast, Typer } from '../../components/Typer';
 import { IGNORED_CHARACTERS } from '../../util/text';
-import { last } from '../../util/std';
 import './Cookie.css';
 
 const cookieFormatter = new Intl.NumberFormat('en-US', {
@@ -40,7 +40,7 @@ function Cookie() {
   React.useEffect(() => {
     const intervalId = setInterval(() => {
       if (stateRef.current == null) return;
-      const lastTime: Typer.TimelineItem = last(stateRef.current.timeline);
+      const lastTime = last(stateRef.current.timeline);
       if (!lastTime) return;
       if (Date.now() - lastTime.timestamp > 1000) {
         return setWps(0);

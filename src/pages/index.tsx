@@ -1,6 +1,7 @@
 import { HashRouter, Switch, Route, Redirect } from 'react-router-dom';
 import Quotes from './quotes/Quotes';
 import Yoshi from './yoshi/Yoshi';
+import Cookie from './cookie/Cookie';
 
 function Router() {
   return (
@@ -11,6 +12,9 @@ function Router() {
         </Route>
         <Route path="/yoshi">
           <Yoshi/>
+        </Route>
+        <Route path="/cookie">
+          <Cookie/>
         </Route>
         <Redirect to="/quotes"/>
       </Switch>

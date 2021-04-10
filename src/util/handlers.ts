@@ -37,12 +37,12 @@ export function wordStats(state: Typer.State, wordIndex: number) {
   return stats;
 }
 
-export function lastWpm(state: Typer.State) {
+export function lastWpm(state: Typer.State, milis = 5000) {
   if (state.timeline.length === 0) return 0;
   const endTime = last(state.timeline).timestamp;
   let slice = timeSlice(
     state, 
-    endTime - 5000,
+    endTime - milis,
     endTime + 1000,
     false
   );

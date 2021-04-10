@@ -1,7 +1,13 @@
 export default function init(
-  _state: Typer.State | null, 
+  state: Typer.State | null, 
   action: Typer.Actions.Init
 ): Typer.State {
+  if (!action.reset) {
+    return {
+      ...state!,
+      content: action.content
+    }
+  }
   return {
     content: action.content,
     typed: '',

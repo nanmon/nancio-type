@@ -11,6 +11,7 @@ declare namespace Typer {
       count: number
     },
     config: Config;
+    [key: string]: any;
   }
 
   type Screen = 'typing' | 'stats';
@@ -42,11 +43,12 @@ declare namespace Typer {
   }
 
   namespace Actions {
-    type Any = Actions.Init | Actions.Screen | Actions.Typing;
+    type Any = Actions.Init | Actions.Screen | Actions.Typing | Actions.Merge;
 
     interface Init {
       type: 'init';
       content: Content;
+      reset: boolean;
     }
 
     interface Screen {
@@ -58,6 +60,11 @@ declare namespace Typer {
       type: 'typing';
       char: string;
       time: number;
+    }
+
+    interface Merge {
+      type: 'merge';
+      state: Partial<State>
     }
   }
 

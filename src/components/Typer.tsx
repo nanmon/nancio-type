@@ -10,16 +10,22 @@ const DispatchContext =
   React.createContext<React.Dispatch<Typer.Actions.Any> | null>(null);
 
 interface Props {
+  typed?: string;
   content: Typer.Content;
+  restartOnContentChange?: boolean
   onType?(state: Typer.State): void;
 }
 
-export function Typer({ content, onType }: Props) {
+export function Typer({ typed, content, onType, restartOnContentChange = true }: Props) {
   const [state, dispatch] = React.useReducer(reducer, null, () => init(content));
 
   React.useEffect(() => {
-    dispatch({type: 'init', content });
-  }, [content]);
+    dispatch({ type: 'init', content, reset: restartOnContentChange });
+  }, [content, restartOnContentChange]);
+
+  React.useEffect(() => {
+    dispatch({ type: 'merge', state: { typed }});
+  }, [typed])
 
   const prevTyped = React.useRef<string | null>(null);
   React.useEffect(() => {
@@ -46,5 +52,5 @@ export function useTyperDispatch() {
 }
 
 function init(content: Typer.Content) {
-  return reducer(null, { type: 'init', content });
+  return reducer(null, { type: 'init', content, reset: true });
 }

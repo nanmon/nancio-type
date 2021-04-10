@@ -1,11 +1,13 @@
 import init from './init';
 import typing from './typing';
 import screen from './screen';
+import merge from './merge';
 
 const ducers = {
   init,
   typing,
-  screen
+  screen,
+  merge,
 };
 
 export default function reducer(

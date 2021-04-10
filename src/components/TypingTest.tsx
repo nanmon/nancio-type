@@ -1,11 +1,10 @@
 import React from 'react';
 import zip from 'lodash/zip';
-import { getWords, IGNORED_MODIFIERS } from '../util/text'
+import { getCaretPosition, getWords, IGNORED_MODIFIERS } from '../util/text'
 import { useTyper, useTyperDispatch } from './Typer'
 import Caret from './Caret';
-import Word from './Word';
 import '../styles/TypingTest.css';
-import { useCaret } from '../hooks/typing-test';
+import Line from './Line';
 
 interface Props {
   onKeyPress(e: React.KeyboardEvent<HTMLInputElement>): boolean;
@@ -18,19 +17,43 @@ function TypingTest({ onKeyPress }: Props) {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [inputHasFocus, setInputFocus] = React.useState(false);
   const [capslock, setCapslock] = React.useState(false);
-  const caretPosition = useCaret(typed, config);
 
   React.useEffect(() => {
     inputRef.current?.focus();
   }, [content.text]);
 
-  const typedWords = getWords(typed)
-  const _words = zip(
-    getWords(content.text),
-    typedWords,
-    [undefined, ...typedWords],
-    typedWords.slice(1)
-  )
+  
+  const lines = React.useMemo(() => {
+    const typedWords = getWords(typed)
+    const words = zip(
+      getWords(content.text),
+      typedWords,
+      [undefined, ...typedWords],
+      typedWords.slice(1)
+    )
+    let currentLength = 0;
+    let currentLine: [string, string] = ['', '']
+    const lines: [string, string][] = [];
+    words.forEach(([word, typed]) => {
+      if (!word) return;
+      let wlength = word.length;
+      if (typed && typed.length > word.length) wlength = typed.length;
+      if (currentLength + 1 + wlength > config.width) {
+        currentLength = wlength;
+        lines.push(currentLine);
+        currentLine = [word, typed || '']
+      } else {
+        currentLength += 1 + wlength;
+        currentLine[0] += ' ' + word;
+        if (typed) currentLine[1] += ' ' + typed;
+      }
+    });
+    return lines;
+  }, [typed, content, config.width]);
+
+  const caret = React.useMemo(() => {
+    return getCaretPosition(lines.map(([t]) => t), typed);
+  }, [lines, typed]);
 
   function keyPressed(e: React.KeyboardEvent<HTMLInputElement>) {
     capslockDetector(e);
@@ -51,18 +74,12 @@ function TypingTest({ onKeyPress }: Props) {
     setCapslock(e.getModifierState('CapsLock'));
   }
 
-  function isCurrent(word?: string, prev?: string, next?: string) {
-    if (!typed && !prev) return true;
-    if (typed.endsWith(' ')) return prev != null && word == null;
-    return word != null && next == null;
-  }
-
   const offset = React.useMemo(() => {
-    if (!caretPosition) return 0;
-    const line = Math.floor(caretPosition.y / config.lineHeight);
+    if (!caret) return 0;
+    const line = caret[1]
     if (line < 1) return 0
     return (line - 1) * config.lineHeight;
-  }, [caretPosition, config]);
+  }, [caret, config]);
 
   const threeLinesHeight = config.lineHeight * 3 + 10 // 10px padding
 
@@ -87,17 +104,16 @@ function TypingTest({ onKeyPress }: Props) {
         <div 
           className="words" 
           onClick={() => inputRef.current?.focus()}
-          style={{ maxWidth: config.width, transform: `translateY(${-offset}px)`}}
+          style={{ transform: `translateY(${-offset}px)`}}
         >
-          {_words.map(([text, typedWord, prevTyped, nextTyped], index) => 
-            text && <Word
+          {lines.map(([text, typed], index) => 
+            text && <Line
               key={index}
               text={text} 
-              typed={typedWord}
-              current={isCurrent(typedWord, prevTyped, nextTyped)} 
+              typed={typed}
             />
           )}
-          <Caret position={caretPosition} focused={inputHasFocus} />
+          <Caret position={caret} focused={inputHasFocus} />
         </div>
       </div>
     </div>

@@ -23,7 +23,7 @@ export default function init(
       fontFamily: 'monospace',
       fontSize: 24,
       lineHeight: 30,
-      width: 800, 
+      width: 80, 
       colors: {
         left: 'gray',
         correct: 'white',

@@ -78,7 +78,7 @@ function Banana() {
   }
 
   return (
-    <div className="Cookie">
+    <div className="Banana">
       <p>bananas: {bananaFormatter.format(state.bananas)}</p>
       <p>bps: {bananaFormatter.format(state.bps)} + {bananaFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
       <Typer content={content} onType={onType} onKeyPress={onKeyPress}/>

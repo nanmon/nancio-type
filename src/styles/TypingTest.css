@@ -9,8 +9,7 @@
 
 .TypingTest .words {
   display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
+  flex-direction: column;
   padding: 10px;
   width: 100%;
 }

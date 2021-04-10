@@ -1,8 +1,9 @@
 import React from 'react';
+import { getWidth } from '../util/text';
 import { useTyper } from "./Typer";
 
 interface Props {
-  position: Typer.CaretPosition | null;
+  position: [number, number];
   focused: boolean;
 }
 
@@ -19,7 +20,8 @@ function Caret({ position, focused }: Props) {
   }, [typed]);
 
   if (!position) return null;
-
+  const [x, y] = position;
+  const charWidth = getWidth('a', config);
   return (
     <span 
       className={className}
@@ -27,7 +29,7 @@ function Caret({ position, focused }: Props) {
         position: 'absolute', 
         top: 0, 
         left: 0, 
-        transform: `translate(${position.x - 8}px, ${position.y - 2}px)`,
+        transform: `translate(${x * charWidth + 3}px, ${y * config.lineHeight + 5}px)`,
         color: config.colors.caret,
         visibility: focused ? 'visible' : 'hidden'
       }}

@@ -34,3 +34,18 @@ export const getWidth = (
   context!.font = `${fontSize}px ${fontFamily}`;
   return context!.measureText(text).width;
 }
+
+export const getCaretPosition = (lines: string[], typed: string): [number, number] => {
+  const words = getWords(typed);
+  let wcount = 0;
+  const lineIndex = lines.findIndex(line => {
+    const lwords = getWords(line);
+    if (wcount + lwords.length >= words.length) return true;
+    wcount += lwords.length;
+    return false;
+  });
+  const lastWords = words.slice(wcount);
+  let charIndex = lastWords.join(' ').length;
+  if (typed.endsWith(' ')) charIndex++;
+  return [charIndex, lineIndex];
+}

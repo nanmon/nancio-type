@@ -3,9 +3,9 @@ import randomWords from 'random-words';
 import last from 'lodash/last';
 import { lastWpm, mistypedLast, Typer } from '../../components/Typer';
 import { IGNORED_CHARACTERS } from '../../util/text';
-import './Cookie.css';
+import './Banana.css';
 
-const cookieFormatter = new Intl.NumberFormat('en-US', {
+const bananaFormatter = new Intl.NumberFormat('en-US', {
   maximumFractionDigits: 3,
   minimumFractionDigits: 3
 });
@@ -16,9 +16,9 @@ const wpmFormatter = new Intl.NumberFormat('en-US', {
   minimumSignificantDigits: 3,
 });
 
-function Cookie() {
+function Banana() {
   const [content, setContent] = React.useState(() => getContent());
-  const [cookies, setCookies] = React.useState(0);
+  const [bananas, setBananas] = React.useState(0);
   const [typewritters, setTypewritters] = React.useState(0);
   const [monkeys, setMonkeys] = React.useState(0);
   const [wps, setWps] = React.useState(0);
@@ -32,7 +32,7 @@ function Cookie() {
   React.useEffect(() => {
     const fps = 20;
     const intervalId = setInterval(() => {
-      setCookies(c => c + cps / fps);
+      setBananas(b => b + cps / fps);
     }, 1000 / fps);
     return () => clearInterval(intervalId);
   }, [cps]);
@@ -64,8 +64,8 @@ function Cookie() {
     if (!lastTime) return;
     const lastChar = lastTime.char;
     if (IGNORED_CHARACTERS.includes(lastChar)) return;
-    if (mistypedLast(state)) return setCookies(c => c - 0.1);
-    setCookies(c => c + 0.2);
+    if (mistypedLast(state)) return setBananas(b => b - 0.1);
+    setBananas(b => b + 0.2);
   }
 
   function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -82,34 +82,34 @@ function Cookie() {
 
   function buyTypewritter() {
     const price = costs.typewritter;
-    if (cookies < price) return;
-    setCookies(c => c - price);
+    if (bananas < price) return;
+    setBananas(b => b - price);
     setTypewritters(t => t + 1);
   }
 
   function buyMonkey() {
     const price = costs.monkey;
-    if (cookies < price) return;
-    setCookies(c => c - price);
+    if (bananas < price) return;
+    setBananas(b => b - price);
     setMonkeys(m => m + 1);
   }
 
   return (
     <div className="Cookie">
-      <p>bananas: {cookieFormatter.format(cookies)}</p>
-      <p>bps: {cookieFormatter.format(cps)} + {cookieFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
+      <p>bananas: {bananaFormatter.format(bananas)}</p>
+      <p>bps: {bananaFormatter.format(cps)} + {bananaFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
       <Typer content={content} onType={onType} onKeyPress={onKeyPress}/>
-      <button disabled={cookies < costs.typewritter} onClick={buyTypewritter}>
+      <button disabled={bananas < costs.typewritter} onClick={buyTypewritter}>
         {typewritters} typewritters, press ctrl + 1 buy one for {costs.typewritter} bananas
       </button>
-      <button disabled={cookies < costs.monkey} onClick={buyMonkey}>
+      <button disabled={bananas < costs.monkey} onClick={buyMonkey}>
         {monkeys} monkes, press ctrl + 2 to buy one for {costs.monkey} bananas
       </button>
     </div>
   )
 }
 
-export default Cookie;
+export default Banana;
 
 function getContent() {
   return {

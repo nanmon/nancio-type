@@ -88,6 +88,22 @@ function init(
         keybind: '0',
         owned: 0
       },
+      {
+        id: 10,
+        name: 'portal',
+        bps: 10_000,
+        price: 1_000_000_000_000,
+        keybind: '-',
+        owned: 0
+      },
+      {
+        id: 11,
+        name: 'time machine',
+        bps: 65_000_000,
+        price: 14_000_000_000_000,
+        keybind: '0',
+        owned: 0
+      },
     ],
     tech: {
       lastTimestamp: action.timestamp

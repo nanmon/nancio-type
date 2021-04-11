@@ -1,0 +1,15 @@
+.Building {
+  font-size: 1rem;
+  background-color: #111;
+  color: white;
+  width: 140px;
+  height: 120px;
+}
+
+.Building:disabled {
+  color: gray;
+}
+
+.Building * {
+  margin: 5px 0;
+}

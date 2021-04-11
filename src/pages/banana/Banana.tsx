@@ -3,23 +3,10 @@ import randomWords from 'random-words';
 import last from 'lodash/last';
 import { lastWpm, mistypedLast, Typer } from '../../components/Typer';
 import { getLines, IGNORED_CHARACTERS } from '../../util/text';
+import * as formatters from './util/formatters';
 import useBanana from './reducer';
-import './Banana.css';
-
-const bananaFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 3,
-  minimumFractionDigits: 3
-});
-
-const wpmFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 0,
-  maximumSignificantDigits: 3,
-  minimumSignificantDigits: 3,
-});
-
-const integerFormatter = new Intl.NumberFormat('en-US', {
-  maximumFractionDigits: 0,
-});
+import Building from './components/Building';
+import './styles/Banana.css';
 
 const initialState = JSON.parse(localStorage.getItem('banana') || 'null');
 
@@ -108,8 +95,8 @@ function Banana() {
 
   return (
     <div className="Banana">
-      <p>bananas: {bananaFormatter.format(state.bananas)}</p>
-      <p>bps: {bananaFormatter.format(state.bps)} + {bananaFormatter.format(wps * 5)}({wpmFormatter.format(wps * 60)} wpm)</p>
+      <p>bananas: {formatters.threeDecimals.format(state.bananas)}</p>
+      <p>bps: {formatters.threeDecimals.format(state.bps)} + {formatters.threeDecimals.format(wps * 5)}({formatters.wpm.format(wps * 60)} wpm)</p>
       <Typer
         typed={typed}
         content={content} 
@@ -118,13 +105,12 @@ function Banana() {
         restartOnContentChange={false}
       />
       {state.buildings.map(building =>
-        <button 
+        <Building
           key={building.id}
-          disabled={state.bananas < building.price} 
-          onClick={() => buyBuilding(building.id)}
-        >
-          {building.owned} {building.name}s, press ctrl + {building.keybind} to buy one for {integerFormatter.format(building.price)} bananas
-        </button>
+          state={state}
+          building={building}
+          onBuy={buyBuilding}
+        /> 
       )}
     </div>
   )

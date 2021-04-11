@@ -31,7 +31,7 @@ export function Typer({
   }, [content, restartOnContentChange]);
 
   React.useEffect(() => {
-    dispatch({ type: 'merge', state: { typed, timeline: [] }});
+    dispatch({ type: 'merge', state: { typed }});
   }, [typed])
 
   const prevTyped = React.useRef<string | null>(null);

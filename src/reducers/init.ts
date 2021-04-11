@@ -5,7 +5,8 @@ export default function init(
   if (!action.reset) {
     return {
       ...state!,
-      content: action.content
+      content: action.content,
+      timeline: []
     }
   }
   return {

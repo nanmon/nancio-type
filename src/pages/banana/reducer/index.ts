@@ -14,9 +14,9 @@ function reducer(state: Banana.State, action: Banana.Actions.Any) {
   return r(state, action);
 }
 
-function useBanana() {
+function useBanana(initialState: Banana.State | null = null) {
   return React.useReducer(reducer, null, () => 
-    init(null, { type: 'init', timestamp: Date.now() })
+    init(initialState, { type: 'init', timestamp: Date.now(), load: initialState != null })
   )
 }
 

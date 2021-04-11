@@ -30,6 +30,7 @@ declare namespace Banana {
     interface Init {
       type: 'init';
       timestamp: number;
+      load: boolean;
     }
 
     interface Tick {

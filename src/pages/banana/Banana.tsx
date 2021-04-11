@@ -17,12 +17,26 @@ const wpmFormatter = new Intl.NumberFormat('en-US', {
   minimumSignificantDigits: 3,
 });
 
+const integerFormatter = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 0,
+});
+
+const initialState = JSON.parse(localStorage.getItem('banana') || 'null');
+
 function Banana() {
   const [typed, setTyped] = React.useState('');
   const [content, setContent] = React.useState(() => getContent());
-  const [state, dispatch] = useBanana();
+  const [state, dispatch] = useBanana(initialState);
   const [wps, setWps] = React.useState(0);
   const stateRef = React.useRef<Typer.State | null>(null);
+  const [savedAt, setSavedAt] = React.useState(Date.now());
+
+  React.useEffect(() => {
+    if (Date.now() - savedAt < 10_000) return;
+    const json = JSON.stringify(state);
+    localStorage.setItem('banana', json);
+    setSavedAt(Date.now());
+  }, [state, savedAt]);
 
   React.useEffect(() => {
     const fps = 20;
@@ -95,7 +109,7 @@ function Banana() {
   return (
     <div className="Banana">
       <p>bananas: {bananaFormatter.format(state.bananas)}</p>
-      <p>bps: {bananaFormatter.format(state.bps)} + {bananaFormatter.format(wps)}({wpmFormatter.format(wps * 60)} wpm)</p>
+      <p>bps: {bananaFormatter.format(state.bps)} + {bananaFormatter.format(wps * 5)}({wpmFormatter.format(wps * 60)} wpm)</p>
       <Typer
         typed={typed}
         content={content} 
@@ -109,7 +123,7 @@ function Banana() {
           disabled={state.bananas < building.price} 
           onClick={() => buyBuilding(building.id)}
         >
-          {building.owned} {building.name}s, press ctrl + {building.keybind} to buy one for {Math.round(building.price)} bananas
+          {building.owned} {building.name}s, press ctrl + {building.keybind} to buy one for {integerFormatter.format(building.price)} bananas
         </button>
       )}
     </div>

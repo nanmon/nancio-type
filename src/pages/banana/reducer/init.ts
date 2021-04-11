@@ -2,10 +2,11 @@ function init(
   state: Banana.State | null, 
   action: Banana.Actions.Init
 ): Banana.State {
+  if (action.load) return state!;
   return {
     bananas: 0,
     bps: 0,
-    bpt: 0.2,
+    bpt: 1,
     buildings: [
       {
         id: 0,

@@ -14,7 +14,7 @@ interface Props {
   content: Typer.Content;
   restartOnContentChange?: boolean
   onType?(state: Typer.State): void;
-  onKeyPress?(e: React.KeyboardEvent<HTMLInputElement>): boolean
+  onKeyPress?(e: React.KeyboardEvent<HTMLInputElement>, direction: 'up' | 'down'): boolean
 }
 
 export function Typer({ 

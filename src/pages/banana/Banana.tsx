@@ -17,6 +17,7 @@ function Banana() {
   const [wps, setWps] = React.useState(0);
   const stateRef = React.useRef<Typer.State | null>(null);
   const [savedAt, setSavedAt] = React.useState(Date.now());
+  const [ctrlHeld, setCtrlHeld] = React.useState(false);
 
   React.useEffect(() => {
     if (Date.now() - savedAt < 10_000) return;
@@ -79,8 +80,12 @@ function Banana() {
       dispatch({ type: 'typed', char: 'correct' });
   }
 
-  function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (!e.getModifierState('Control')) return false;
+  function onKeyPress(e: React.KeyboardEvent<HTMLInputElement>, direction: 'up' | 'down') {
+    if (!e.getModifierState('Control')) {
+      setCtrlHeld(false);
+      return false;
+    }
+    setCtrlHeld(direction === 'down');
     const building = state.buildings.find(b => {
       return e.key === b.keybind;
     });
@@ -110,6 +115,7 @@ function Banana() {
           state={state}
           building={building}
           onBuy={buyBuilding}
+          ctrlHeld={ctrlHeld}
         /> 
       )}
     </div>

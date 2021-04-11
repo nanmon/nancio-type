@@ -6,7 +6,10 @@ import '../styles/TypingTest.css';
 import Line from './Line';
 
 interface Props {
-  onKeyPress(e: React.KeyboardEvent<HTMLInputElement>): boolean;
+  onKeyPress(
+    e: React.KeyboardEvent<HTMLInputElement>,
+    direction: 'up' | 'down'
+  ): boolean;
 }
 
 function TypingTest({ onKeyPress }: Props) {
@@ -29,9 +32,9 @@ function TypingTest({ onKeyPress }: Props) {
     return getCaretPosition(lines.map(([t]) => t), typed);
   }, [lines, typed]);
 
-  function keyPressed(e: React.KeyboardEvent<HTMLInputElement>) {
+  function keyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     capslockDetector(e);
-    if (onKeyPress(e)) return;
+    if (onKeyPress(e, 'down')) return;
     const char = e.key;
     const ignore = IGNORED_MODIFIERS.some(mod => {
       return e.getModifierState(mod);
@@ -42,6 +45,11 @@ function TypingTest({ onKeyPress }: Props) {
       e.preventDefault();
       return;
     }
+  }
+
+  function keyUp(e: React.KeyboardEvent<HTMLInputElement>) {
+    onKeyPress(e, 'up');
+    capslockDetector(e);
   }
 
   function capslockDetector(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -63,8 +71,8 @@ function TypingTest({ onKeyPress }: Props) {
     }}>
       <input 
         ref={inputRef}
-        onKeyDown={keyPressed}
-        onKeyUp={capslockDetector}
+        onKeyDown={keyDown}
+        onKeyUp={keyUp}
         style={{height: 0, padding: 0, border: 0, position: "absolute"}}
         onFocus={() => setInputFocus(true)}
         onBlur={() => setInputFocus(false)}

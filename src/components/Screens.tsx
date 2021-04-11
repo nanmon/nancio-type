@@ -4,7 +4,7 @@ import Stats from './Stats';
 import { useTyper } from './Typer';
 
 interface Props {
-  onKeyPress(e: React.KeyboardEvent<HTMLInputElement>): boolean;
+  onKeyPress(e: React.KeyboardEvent<HTMLInputElement>, direction: 'up' | 'down'): boolean;
 }
 
 function Screens({ onKeyPress }: Props) {

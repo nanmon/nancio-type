@@ -8,102 +8,18 @@ function init(
     bps: 0,
     bpt: 1,
     buildings: [
-      {
-        id: 0,
-        name: 'typewritter',
-        bps: 0.1,
-        price: 15,
-        keybind: '1',
-        owned: 0
-      }, 
-      {
-        id: 1,
-        name: 'monke',
-        bps: 1,
-        price: 100,
-        keybind: '2',
-        owned: 0
-      },
-      {
-        id: 2,
-        name: 'bot',
-        bps: 8,
-        price: 1_100,
-        keybind: '3',
-        owned: 0
-      },
-      {
-        id: 3,
-        name: 'server',
-        bps: 47,
-        price: 12_000,
-        keybind: '4',
-        owned: 0
-      },
-      {
-        id: 4,
-        name: 'crytypomine',
-        bps: 260,
-        price: 130_000,
-        keybind: '5',
-        owned: 0
-      },
-      {
-        id: 5,
-        name: 'bank',
-        bps: 1_400,
-        price: 1_400_000,
-        keybind: '6',
-        owned: 0
-      },
-      {
-        id: 6,
-        name: 'temple',
-        bps: 7_800,
-        price: 20_000_000,
-        keybind: '7',
-        owned: 0
-      },
-      {
-        id: 7,
-        name: 'wizard tower',
-        bps: 44_000,
-        price: 330_000_000,
-        keybind: '8',
-        owned: 0
-      },
-      {
-        id: 8,
-        name: 'shipment',
-        bps: 260_000,
-        price: 5_100_000_000,
-        keybind: '9',
-        owned: 0
-      },
-      {
-        id: 9,
-        name: 'alchemy lab',
-        bps: 1_600_000,
-        price: 75_000_000_000,
-        keybind: '0',
-        owned: 0
-      },
-      {
-        id: 10,
-        name: 'portal',
-        bps: 10_000,
-        price: 1_000_000_000_000,
-        keybind: '-',
-        owned: 0
-      },
-      {
-        id: 11,
-        name: 'time machine',
-        bps: 65_000_000,
-        price: 14_000_000_000_000,
-        keybind: '0',
-        owned: 0
-      },
+      building(0, 'typewriter', 0.1, 15, '1'), 
+      building(1, 'monke', 1, 100, '2'),
+      building(2, 'bot', 8, 1_100, '3'),
+      building(3, 'server', 47, 12_000, '4'),
+      building(4, 'crtypomine', 260, 130_000, '5'),
+      building(5, 'bank', 1_400, 1_400_000, '6'),
+      building(6, 'temple', 7_800, 20_000_000, '7'),
+      building(7, 'wizard tower', 44_000, 330_000_000, '8'),
+      building(8, 'shipment', 260_000, 5_100_000_000, '9'),
+      building(9, 'alchemy lab', 1_600_000, 75_000_000_000, '0'),
+      building(10, 'portal', 10_000, 1_000_000_000_000, '-'),
+      building(11, 'time machine', 65_000_000, 14_000_000_000_000, '='),
     ],
     tech: {
       lastTimestamp: action.timestamp
@@ -113,3 +29,21 @@ function init(
 }
 
 export default init;
+
+function building(
+  id: number,
+  name: string,
+  bps: number,
+  price: number,
+  keybind: string,
+): Banana.Building {
+  return {
+    id,
+    name,
+    bps,
+    price,
+    keybind,
+    owned: 0
+  };
+}
+

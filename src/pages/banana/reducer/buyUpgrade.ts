@@ -27,7 +27,8 @@ type EffectFn = (state: Banana.State, effect: Banana.Effects.Any) => void
 
 const effects = {
   efficiency,
-  gain
+  gain,
+  typing
 }
 
 function efficiency(state: Banana.State, effect: Banana.Effects.Efficiency) {
@@ -58,4 +59,8 @@ function gain(state: Banana.State, effect: Banana.Effects.Gain) {
   typewriter.bps += count * multiplier;
   buildings[0] = typewriter;
   state.buildings = buildings;
+}
+
+function typing(state: Banana.State, effect: Banana.Effects.Typing) {
+  state.typerCpsPercent += effect.cpsPercent;
 }

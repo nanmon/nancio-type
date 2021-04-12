@@ -22,8 +22,14 @@ function Banana() {
   const [ctrlHeld, setCtrlHeld] = React.useState(false);
 
   const availableUpgrades = React.useMemo(() => {
-    return state.upgrades.filter(u => u.unlocked && !u.bought);
+    return state.upgrades
+      .filter(u => u.unlocked && !u.bought)
+      .sort((a, b) => a.price - b.price);
   }, [state.upgrades]);
+
+  const shownBpt = React.useMemo(() => {
+    return wps * 5 * (state.bpt + state.bps * state.typerCpsPercent / 100);
+  }, [wps, state]);
 
   React.useEffect(() => {
     if (Date.now() - savedAt < 10_000) return;
@@ -151,7 +157,7 @@ function Banana() {
   return (
     <div className="Banana">
       <p>bananas: {formatters.totalBananas(state.bananas)}</p>
-      <p>bps: {formatters.bps(state.bps)} + {formatters.bps(wps * 5 * state.bpt)}({formatters.wpm(wps * 60)} wpm)</p>
+      <p>bps: {formatters.bps(state.bps)} + {formatters.bps(shownBpt)}({formatters.wpm(wps * 60)} wpm)</p>
       <Typer
         typed={typed}
         content={content} 

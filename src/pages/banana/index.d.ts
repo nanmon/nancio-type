@@ -4,6 +4,9 @@ declare namespace Banana {
     bps: number;
     bpt: number;
     typerGain: number;
+    typerCpsPercent: number;
+    typerCount: number;
+    typerTotalBananas: number;
     buildings: Building[];
     upgrades: Upgrade[];
     config: Config;
@@ -58,7 +61,7 @@ declare namespace Banana {
   }
 
   namespace Effects {
-    type Any = Efficiency | Gain;
+    type Any = Efficiency | Gain | Typing;
   
     interface Efficiency {
       type: 'efficiency'
@@ -71,6 +74,11 @@ declare namespace Banana {
       buildingId: number;
       gainType: 'add' | 'multiply';
       gain: number;
+    }
+
+    interface Typing {
+      type: 'typing';
+      cpsPercent: number;
     }
   }
 

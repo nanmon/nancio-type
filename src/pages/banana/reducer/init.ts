@@ -2,12 +2,19 @@ function init(
   state: Banana.State | null, 
   action: Banana.Actions.Init
 ): Banana.State {
-  if (action.load) return state!;
+  if (action.load) {
+    return {
+      ...state!
+    };
+  }
   return {
     bananas: 0,
     bps: 0,
     bpt: 1,
     typerGain: 0,
+    typerCpsPercent: 0,
+    typerCount: 0,
+    typerTotalBananas: 0,
     buildings: [
       building(0, 'typewriter', 0.1, 15), 
       building(1, 'monke', 1, 100),
@@ -95,7 +102,7 @@ function init(
       doubleEfficiencyUpgrade(56, 'dk rap prayers', 10e21, 6, 250),
       // spaceship
       doubleEfficiencyUpgrade(57, 'banana nebulae', 3.3e9, 7, 1),
-      doubleEfficiencyUpgrade(58, 'wormholes', 16.5e9, 7, 1),
+      doubleEfficiencyUpgrade(58, 'wormholes', 16.5e9, 7, 5),
       doubleEfficiencyUpgrade(59, 'frequent flyer', 165e9, 7, 25),
       doubleEfficiencyUpgrade(60, 'warp drive', 16.5e12, 7, 50),
       doubleEfficiencyUpgrade(61, 'banana monoliths', 1.65e15, 7, 100),
@@ -119,7 +126,16 @@ function init(
       doubleEfficiencyUpgrade(77, 'yestermorrow comp', 375e15, 9, 100),
       doubleEfficiencyUpgrade(78, 'far future enact', 37.5e18, 9, 150),
       doubleEfficiencyUpgrade(79, 'great loop hypo', 37.5e21, 9, 200),
-      doubleEfficiencyUpgrade(80, 'second seconds', 37.5e24, 9, 250)
+      doubleEfficiencyUpgrade(80, 'second seconds', 37.5e24, 9, 250),
+      // typing
+      typingUpgrade(81, 'pbc keycaps', 50_000, 1_000),
+      typingUpgrade(82, 'metal keycaps', 5e6, 100_000),
+      typingUpgrade(83, 'titanium keycaps', 500e6, 10e6),
+      typingUpgrade(84, 'adamantium keycaps', 50e9, 1e9),
+      typingUpgrade(85, 'unobtainium keycaps', 5e12, 100e9),
+      typingUpgrade(86, 'eludium keycaps', 500e12, 10e12),
+      typingUpgrade(87, 'wishalloy keycaps', 50e15, 1e15),
+      typingUpgrade(88, 'fantasteel keycaps', 5e18, 10e18),
     ],
     tech: {
       lastTimestamp: action.timestamp
@@ -200,4 +216,19 @@ function buildingGainUpgrade(
     gainType,
     gain
   });
+}
+
+function typingUpgrade(
+  id: number,
+  name: string,
+  price: number,
+  needed: number,
+): Banana.Upgrade {
+  return upgrade(id, name, price, {
+    type: 'typing',
+    needed
+  }, {
+    type: 'typing',
+    cpsPercent: 1
+  })
 }

@@ -12,6 +12,7 @@ function typed(
   const newState = {
     ...state,
     bananas,
+    totalBananas: state.totalBananas + made,
     typerCount: state.typerCount + 1,
     typerTotalBananas: state.typerTotalBananas + made
   }

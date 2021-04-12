@@ -1,6 +1,7 @@
 declare namespace Banana {
   interface State {
     bananas: number;
+    totalBananas: number;
     bps: number;
     bpt: number;
     typerGain: number;
@@ -19,6 +20,8 @@ declare namespace Banana {
     bps: number;
     price: number;
     owned: number;
+    unlocked: boolean;
+    unlocksAt: number;
   }
 
   interface Upgrade {

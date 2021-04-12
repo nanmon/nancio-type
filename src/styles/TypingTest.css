@@ -5,9 +5,9 @@
   align-items: center;
 }
 
-.TypingTest .threeLines {  
+/* .TypingTest .threeLines {  
   overflow: hidden;
-}
+} */
 
 .TypingTest .words {
   display: flex;

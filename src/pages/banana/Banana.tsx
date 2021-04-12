@@ -21,6 +21,11 @@ function Banana() {
   const [savedAt, setSavedAt] = React.useState(Date.now());
   const [ctrlHeld, setCtrlHeld] = React.useState(false);
 
+  const availableBuildings = React.useMemo(() => {
+    return state.buildings
+      .filter(u => u.unlocked)
+  }, [state.buildings]);
+
   const availableUpgrades = React.useMemo(() => {
     return state.upgrades
       .filter(u => u.unlocked && !u.bought)
@@ -124,9 +129,33 @@ function Banana() {
     dispatch({ type: 'buyUpgrade', upgradeId: upgrade.id });
   }
 
-  function renderRow(index: number) {
-    const order = ['top', 'home', 'bottom'];
-    const lengths = [10, 9, 7];
+  function renderBuildingsRow() {
+    return (
+      <div className="top-row">
+        {availableBuildings.map(building =>
+          <Building
+            key={building.id}
+            state={state}
+            building={building}
+            onBuy={buyBuilding}
+            ctrlHeld={ctrlHeld}
+          /> 
+        )}
+        {Building.KEYBINDS
+          .slice(availableBuildings.length)
+          .map(key =>
+            <button className="Building" disabled>
+              <h3>{key}</h3>
+            </button>
+          )
+        }
+      </div>
+    );
+  }
+
+  function renderUpgradesRow(index: number) {
+    const order = ['home', 'bottom'];
+    const lengths = [9, 7];
     const start = sum(lengths.slice(0, index));
     const end = sum(lengths.slice(0, index + 1));
     const upgrades = availableUpgrades.slice(start, end);
@@ -166,20 +195,9 @@ function Banana() {
         restartOnContentChange={false}
       />
       <div className="keyboard">
-        <div className="number-row">
-          {state.buildings.map(building =>
-            <Building
-              key={building.id}
-              state={state}
-              building={building}
-              onBuy={buyBuilding}
-              ctrlHeld={ctrlHeld}
-            /> 
-          )}
-        </div>
-        {renderRow(0)}
-        {renderRow(1)}
-        {renderRow(2)}
+        {renderBuildingsRow()}
+        {renderUpgradesRow(0)}
+        {renderUpgradesRow(1)}
       </div>
     </div>
   )

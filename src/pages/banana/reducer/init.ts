@@ -4,11 +4,18 @@ function init(
 ): Banana.State {
   if (action.load) {
     return {
-      ...state!
+      ...state!,
+      totalBananas: state!.bananas,
+      buildings: state!.buildings.map(b => {
+        b.unlocked = b.owned > 0;
+        b.unlocksAt = b.price;
+        return b;
+      })
     };
   }
   return {
     bananas: 0,
+    totalBananas: 0,
     bps: 0,
     bpt: 1,
     typerGain: 0,
@@ -157,7 +164,9 @@ function building(
     name,
     bps,
     price,
-    owned: 0
+    owned: 0,
+    unlocked: false,
+    unlocksAt: price
   };
 }
 

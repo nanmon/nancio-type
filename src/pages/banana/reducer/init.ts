@@ -5,12 +5,6 @@ function init(
   if (action.load) {
     return {
       ...state!,
-      totalBananas: state!.bananas,
-      buildings: state!.buildings.map(b => {
-        b.unlocked = b.owned > 0;
-        b.unlocksAt = b.price;
-        return b;
-      })
     };
   }
   return {

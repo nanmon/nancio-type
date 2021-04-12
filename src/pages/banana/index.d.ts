@@ -14,6 +14,14 @@ declare namespace Banana {
     tech: Tech
   }
 
+  // interface Typer {
+  //   bpt: number;
+  //   gain: number;
+  //   cpsPercent: number;
+  //   count: number;
+  //   totalBananas: number;
+  // }
+
   interface Building {
     id: number;
     name: string;

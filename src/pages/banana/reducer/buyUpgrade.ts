@@ -28,7 +28,8 @@ type EffectFn = (state: Banana.State, effect: Banana.Effects.Any) => void
 const effects = {
   efficiency,
   gain,
-  typing
+  typing,
+  bpsMultiplier
 }
 
 function efficiency(state: Banana.State, effect: Banana.Effects.Efficiency) {
@@ -63,4 +64,11 @@ function gain(state: Banana.State, effect: Banana.Effects.Gain) {
 
 function typing(state: Banana.State, effect: Banana.Effects.Typing) {
   state.typerCpsPercent += effect.cpsPercent;
+}
+
+function bpsMultiplier(
+  state: Banana.State, 
+  effect: Banana.Effects.BpsMultiplier
+) {
+  state.bpsMultiplier += effect.bonus;
 }

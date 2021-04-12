@@ -3,7 +3,7 @@ function tick(
   action: Banana.Actions.Tick
 ): Banana.State {
   const dt = action.timestamp - state.tech.lastTimestamp;
-  const made = state.bps * dt / 1000
+  const made = state.bps * state.bpsMultiplier * dt / 1000;
   const bananas = state.bananas + made;
   const newState = {
     ...state,
@@ -14,7 +14,8 @@ function tick(
       lastTimestamp: action.timestamp
     }
   };
-  unlockBuildings(state)
+  unlockBuildings(state);
+  unlockUpgrades(state);
   return newState;
 }
 
@@ -22,12 +23,24 @@ export default tick;
 
 function unlockBuildings(state: Banana.State) {
   const buildings = state.buildings.map(building => {
-    if (!building.unlocked && state.totalBananas >= building.unlocksAt)
-      return {
-        ...building,
-        unlocked: true
-      }
-    return building;
+    if ( building.unlocked 
+      || building.unlocksAt > state.totalBananas
+    ) {
+      return building;
+    }
+    return { ...building, unlocked: true };
   });
   state.buildings = buildings;
+}
+
+function unlockUpgrades(state: Banana.State) {
+  state.upgrades = state.upgrades.map(upgrade => {
+    if ( upgrade.unlocked 
+      || upgrade.lock.type !== 'banana'
+      || upgrade.lock.needed > state.totalBananas
+    ) {
+      return upgrade;
+    }
+    return {...upgrade, unlocked: true};
+  });
 }

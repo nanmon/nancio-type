@@ -3,6 +3,7 @@ declare namespace Banana {
     bananas: number;
     totalBananas: number;
     bps: number;
+    bpsMultiplier: number;
     bpt: number;
     typerGain: number;
     typerCpsPercent: number;
@@ -72,7 +73,7 @@ declare namespace Banana {
   }
 
   namespace Effects {
-    type Any = Efficiency | Gain | Typing;
+    type Any = Efficiency | Gain | Typing | BpsMultiplier;
   
     interface Efficiency {
       type: 'efficiency'
@@ -90,6 +91,11 @@ declare namespace Banana {
     interface Typing {
       type: 'typing';
       cpsPercent: number;
+    }
+
+    interface BpsMultiplier {
+      type: 'bpsMultiplier';
+      bonus: number;
     }
   }
 

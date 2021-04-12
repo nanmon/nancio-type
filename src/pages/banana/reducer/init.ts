@@ -11,6 +11,7 @@ function init(
     bananas: 0,
     totalBananas: 0,
     bps: 0,
+    bpsMultiplier: 1,
     bpt: 1,
     typerGain: 0,
     typerCpsPercent: 0,
@@ -137,6 +138,34 @@ function init(
       typingUpgrade(86, 'eludium keycaps', 500e12, 10e12),
       typingUpgrade(87, 'wishalloy keycaps', 50e15, 1e15),
       typingUpgrade(88, 'fantasteel keycaps', 5e18, 10e18),
+      // banana splits
+      bpsMultiplierUpgrade(89, 'banana split', 1e6, 50_000, 0.01),
+      bpsMultiplierUpgrade(90, 'sugar split', 5e6, 250_000, 0.01),
+      bpsMultiplierUpgrade(91, 'oatmeal split', 10e6, 500_000, 0.01),
+      bpsMultiplierUpgrade(92, 'peanut butter split', 50e6, 2.5e6, 0.02),
+      bpsMultiplierUpgrade(93, 'coconut split', 100e6, 5e6, 0.02),
+      bpsMultiplierUpgrade(94, 'almond split', 100e6, 5e6, 0.02),
+      bpsMultiplierUpgrade(95, 'hazelnut split', 100e6, 5e6, 0.02),
+      bpsMultiplierUpgrade(96, 'walnut split', 100e6, 5e6, 0.02),
+      bpsMultiplierUpgrade(97, 'cashew split', 100e6, 5e6, 0.02),
+      bpsMultiplierUpgrade(98, 'white chocosplit', 500e6, 25e6, 0.02),
+      bpsMultiplierUpgrade(99, 'milk chocosplit', 500e6, 25e6, 0.02),
+      bpsMultiplierUpgrade(100, 'macadamia split', 1e9, 50e6, 0.02),
+      bpsMultiplierUpgrade(101, 'choco-chips split', 5e9, 250e6, 0.02),
+      bpsMultiplierUpgrade(102, 'whitemaca split', 10e9, 500e6, 0.02),
+      bpsMultiplierUpgrade(103, 'choco split', 50e9, 2.5e9, 0.02),
+      bpsMultiplierUpgrade(104, 'dark chocosplit', 100e9, 5e9, 0.05),
+      bpsMultiplierUpgrade(105, 'light chocosplit', 100e9, 5e9, 0.05),
+      bpsMultiplierUpgrade(106, 'eclipse split', 500e9, 25e9, 0.02),
+      bpsMultiplierUpgrade(107, 'zebra split', 1e12, 50e9, 0.02),
+      bpsMultiplierUpgrade(108, 'snicker split', 5e12, 250e9, 0.02),
+      bpsMultiplierUpgrade(109, 'waffle split', 10e12, 500e9, 0.02),
+      bpsMultiplierUpgrade(110, 'macaroon split', 50e12, 2.5e12, 0.02),
+      bpsMultiplierUpgrade(111, 'empire split', 100e12, 5e12, 0.02),
+      bpsMultiplierUpgrade(112, 'madeleine split', 500e12, 25e12, 0.02),
+      bpsMultiplierUpgrade(113, 'palmiers split', 500e12, 25e12, 0.02),
+      bpsMultiplierUpgrade(114, 'palet split', 1e15, 50e12, 0.02),
+      bpsMultiplierUpgrade(115, 'sablé split', 1e15, 50e12, 0.02),
     ],
     tech: {
       lastTimestamp: action.timestamp
@@ -234,4 +263,20 @@ function typingUpgrade(
     type: 'typing',
     cpsPercent: 1
   })
+}
+
+function bpsMultiplierUpgrade(
+  id: number,
+  name: string,
+  price: number,
+  needed: number,
+  bonus: number
+) {
+  return upgrade(id, name, price, {
+    type: 'banana',
+    needed
+  }, {
+    type: 'bpsMultiplier',
+    bonus
+  });
 }

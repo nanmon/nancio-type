@@ -31,10 +31,14 @@ function Banana() {
       .filter(u => u.unlocked && !u.bought)
       .sort((a, b) => a.price - b.price);
   }, [state.upgrades]);
+  const shownBps = React.useMemo(() => {
+    return state.bps * state.bpsMultiplier;
+  }, [state]);
 
   const shownBpt = React.useMemo(() => {
-    return wps * 5 * (state.bpt + state.bps * state.typerCpsPercent / 100);
-  }, [wps, state]);
+    return wps * 5 * (state.bpt + shownBps * state.typerCpsPercent / 100);
+  }, [wps, state, shownBps]);
+
 
   React.useEffect(() => {
     if (Date.now() - savedAt < 10_000) return;
@@ -144,7 +148,7 @@ function Banana() {
         {Building.KEYBINDS
           .slice(availableBuildings.length)
           .map(key =>
-            <button className="key" disabled>
+            <button key={key} className="key" disabled>
               <h3>{key}</h3>
             </button>
           )
@@ -166,7 +170,7 @@ function Banana() {
             key={upgrade.id}
             state={state}
             upgrade={upgrade}
-            index={index}
+            index={start + index}
             ctrlHeld={ctrlHeld}
             onBuy={buyUpgrade}
           />
@@ -174,7 +178,7 @@ function Banana() {
         {Upgrade.KEYBINDS
           .slice(start + upgrades.length, end)
           .map(key =>
-            <button className="key" disabled>
+            <button key={key} className="key" disabled>
               <h3>{key}</h3>
             </button>
           )
@@ -186,7 +190,7 @@ function Banana() {
   return (
     <div className="Banana">
       <p>bananas: {formatters.totalBananas(state.bananas)}</p>
-      <p>bps: {formatters.bps(state.bps)} + {formatters.bps(shownBpt)}({formatters.wpm(wps * 60)} wpm)</p>
+      <p>bps: {formatters.bps(shownBps)} + {formatters.bps(shownBpt)}({formatters.wpm(wps * 60)} wpm)</p>
       <Typer
         typed={typed}
         content={content} 

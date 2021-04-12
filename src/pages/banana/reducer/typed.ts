@@ -6,7 +6,7 @@ function typed(
   if (action.char === 'ignored') return state;
   const multiplier = action.char === 'correct' ? 1 : 0.5;
   const made = state.bpt * multiplier 
-    + state.bps * state.typerCpsPercent / 100
+    + state.bps * state.bpsMultiplier * state.typerCpsPercent / 100;
   bananas += made;
   
   const newState = {
@@ -23,16 +23,13 @@ function typed(
 export default typed;
 
 function typingUnlock(state: Banana.State) {
-  state.upgrades.forEach(upgrade => {
+  state.upgrades = state.upgrades.map(upgrade => {
     if ( upgrade.unlocked 
       || upgrade.lock.type !== 'typing'
       || upgrade.lock.needed > state.typerTotalBananas
     ) {
-      return;
+      return upgrade;
     }
-    // did unlock
-    const up = {...upgrade, unlocked: true};
-    state.upgrades = [...state.upgrades];
-    state.upgrades[up.id] = up;
+    return {...upgrade, unlocked: true};
   });
 }

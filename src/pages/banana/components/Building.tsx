@@ -16,7 +16,7 @@ function Building({ state, building, ctrlHeld, onBuy }: Props) {
   const keybind = KEYBINDS[building.id];
   return (
     <button
-      className="Building"
+      className="Building key"
       disabled={state.bananas < building.price} 
       onClick={() => onBuy(building.id)}
     >

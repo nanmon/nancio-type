@@ -8,6 +8,22 @@
   flex-direction: column;
 }
 
+.Banana .keyboard .key {
+  font-size: 0.9rem;
+  background-color: #111;
+  color: white;
+  width: 120px;
+  height: 120px;
+}
+
+.Banana .keyboard .key:disabled {
+  color: gray;
+}
+
+.Banana .keyboard .key * {
+  margin: 5px 0;
+}
+
 .Banana .number-row {
   display: flex;
   flex-direction: row;

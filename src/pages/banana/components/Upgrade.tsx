@@ -17,7 +17,7 @@ function Upgrade({ state, upgrade, index, ctrlHeld, onBuy }: Props) {
   const keybind = KEYBINDS[index];
   return (
     <button
-      className="Upgrade"
+      className="Upgrade key"
       disabled={state.bananas < upgrade.price} 
       onClick={() => onBuy(upgrade)}
     >

@@ -144,7 +144,7 @@ function Banana() {
         {Building.KEYBINDS
           .slice(availableBuildings.length)
           .map(key =>
-            <button className="Building" disabled>
+            <button className="key" disabled>
               <h3>{key}</h3>
             </button>
           )
@@ -174,7 +174,7 @@ function Banana() {
         {Upgrade.KEYBINDS
           .slice(start + upgrades.length, end)
           .map(key =>
-            <button className="Upgrade" disabled>
+            <button className="key" disabled>
               <h3>{key}</h3>
             </button>
           )

@@ -7,6 +7,7 @@ function init(
     bananas: 0,
     bps: 0,
     bpt: 1,
+    typerGain: 0,
     buildings: [
       building(0, 'typewriter', 0.1, 15), 
       building(1, 'monke', 1, 100),
@@ -28,13 +29,13 @@ function init(
       // building(17, 'idleverse', 8.3e12, 12e21)
     ],
     upgrades: [
-      doubleEfficiencyUpgrade(0, 'typing lessons', 100, 0, 1, true),
-      doubleEfficiencyUpgrade(1, 'carpal tunneling', 500, 0, 1, true),
-      doubleEfficiencyUpgrade(2, 'ten fingers', 10_000, 0, 10, true),
-      buildingGainUpgrade(3, 'thousand fingers', 100_000, 0, 25, 'add', 0.1, true),
-      buildingGainUpgrade(4, 'million fingers', 10_000_000, 0, 50, 'multiply', 5, true),
-      buildingGainUpgrade(5, 'billion fingers', 100_000_000, 0, 100, 'multiply', 10, true),
-      buildingGainUpgrade(6, 'trillion fingers', 1_000_000_000, 0, 150, 'multiply', 20, true)
+      doubleEfficiencyUpgrade(0, 'typing lessons', 100, 0, 1),
+      doubleEfficiencyUpgrade(1, 'carpal tunneling', 500, 0, 1),
+      doubleEfficiencyUpgrade(2, 'ten fingers', 10_000, 0, 10),
+      buildingGainUpgrade(3, 'thousand fingers', 100_000, 0, 25, 'add', 0.1),
+      buildingGainUpgrade(4, 'million fingers', 10_000_000, 0, 50, 'multiply', 5),
+      buildingGainUpgrade(5, 'billion fingers', 100_000_000, 0, 100, 'multiply', 10),
+      buildingGainUpgrade(6, 'trillion fingers', 1_000_000_000, 0, 150, 'multiply', 20)
     ],
     tech: {
       lastTimestamp: action.timestamp
@@ -84,9 +85,8 @@ function doubleEfficiencyUpgrade(
   price: number,
   buildingId: number,
   needed: number,
-  withTyper: boolean = false
 ): Banana.Upgrade {
-  const up = upgrade(id, name, price, {
+  return upgrade(id, name, price, {
     type: 'building',
     buildingId,
     needed
@@ -95,12 +95,6 @@ function doubleEfficiencyUpgrade(
     buildingId,
     multiplier: 2
   });
-  if (withTyper) up.effects.push({
-    type: 'efficiency',
-    buildingId: -1,
-    multiplier: 2
-  });
-  return up;
 }
 
 function buildingGainUpgrade(
@@ -111,9 +105,8 @@ function buildingGainUpgrade(
   needed: number,
   gainType: 'add' | 'multiply',
   gain: number,
-  withTyper: boolean = false,
 ): Banana.Upgrade {
-  const up = upgrade(id, name, price, {
+  return upgrade(id, name, price, {
     type: 'building',
     buildingId,
     needed
@@ -123,11 +116,4 @@ function buildingGainUpgrade(
     gainType,
     gain
   });
-  if (withTyper) up.effects.push({
-    type: 'gain',
-    buildingId: -1,
-    gainType,
-    gain
-  });
-  return up;
 }

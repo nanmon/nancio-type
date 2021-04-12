@@ -3,6 +3,7 @@ declare namespace Banana {
     bananas: number;
     bps: number;
     bpt: number;
+    typerGain: number;
     buildings: Building[];
     upgrades: Upgrade[];
     config: Config;

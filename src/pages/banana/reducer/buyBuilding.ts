@@ -9,6 +9,12 @@ function buyBuilding(
   const newState = { ...state };
   newState.bananas -= building.price;
   newState.bps += building.bps;
+  if (newState.typerGain > 0 && building.id !== 0) {
+    newState.bpt += newState.typerGain;
+    const typewriter = {...buildings[0]};
+    typewriter.bps += newState.typerGain;
+    buildings[0] = typewriter;
+  }
   building.owned++;
   building.price *= 1.15;
   buildings[action.buildingId] = building;

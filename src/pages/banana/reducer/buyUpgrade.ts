@@ -1,3 +1,5 @@
+import sum from 'lodash/sum'
+
 function buyUpgrade(
   state: Banana.State,
   action: Banana.Actions.BuyUpgrade
@@ -29,26 +31,31 @@ const effects = {
 }
 
 function efficiency(state: Banana.State, effect: Banana.Effects.Efficiency) {
-  if (effect.buildingId === -1) {
+  if (effect.buildingId === 0) {
     state.bpt *= effect.multiplier
-  } else {
-    const buildings = [...state.buildings];
-    const building = {...buildings[effect.buildingId]};
-    state.bps += building.bps * (effect.multiplier - 1) * building.owned;
-    building.bps *= effect.multiplier;
-    buildings[effect.buildingId] = building;
-    state.buildings = buildings;
   }
+  const buildings = [...state.buildings];
+  const building = {...buildings[effect.buildingId]};
+  state.bps += building.bps * (effect.multiplier - 1) * building.owned;
+  building.bps *= effect.multiplier;
+  buildings[effect.buildingId] = building;
+  state.buildings = buildings;
 }
 
 function gain(state: Banana.State, effect: Banana.Effects.Gain) {
-  // if (effect.buildingId === -1) {
-  //   state.bpt *= effect.multiplier
-  // } else {
-  //   const buildings = [...state.buildings];
-  //   const building = {...buildings[effect.buildingId]};
-  //   building.bps *= effect.multiplier;
-  //   buildings[effect.buildingId] = building;
-  //   state.buildings = buildings;
-  // }
+  let multiplier: number;
+  if (effect.gainType === 'add') {
+    multiplier = effect.gain;
+    state.typerGain += effect.gain;
+  } else {
+    multiplier = state.typerGain * (effect.gain - 1);
+    state.typerGain *= effect.gain;
+  }
+  const count = sum(state.buildings.slice(1).map(b => b.owned));
+  state.bpt += count * multiplier;
+  const buildings = [...state.buildings];
+  const typewriter = {...buildings[0]};
+  typewriter.bps += count * multiplier;
+  buildings[0] = typewriter;
+  state.buildings = buildings;
 }

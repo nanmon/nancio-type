@@ -3,10 +3,11 @@ import init from './init';
 import tick from './tick';
 import typed from './typed';
 import buyBuilding from './buyBuilding';
+import buyUpgrade from './buyUpgrade';
 
 type Reducer = (state: Banana.State, action: Banana.Actions.Any) => Banana.State
 
-const ducers = { init, tick, typed, buyBuilding };
+const ducers = { init, tick, typed, buyBuilding, buyUpgrade };
 
 function reducer(state: Banana.State, action: Banana.Actions.Any) {
   const r = ducers[action.type] as Reducer;

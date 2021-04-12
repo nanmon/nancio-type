@@ -1,0 +1,15 @@
+.Upgrade {
+  font-size: 0.9rem;
+  background-color: #111;
+  color: white;
+  width: 120px;
+  height: 120px;
+}
+
+.Upgrade:disabled {
+  color: gray;
+}
+
+.Upgrade * {
+  margin: 5px 0;
+}

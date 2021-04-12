@@ -1,11 +1,13 @@
 import React from 'react';
 import randomWords from 'random-words';
 import last from 'lodash/last';
+import sum from 'lodash/sum';
 import { lastWpm, mistypedLast, Typer } from '../../components/Typer';
 import { getLines, IGNORED_CHARACTERS } from '../../util/text';
 import * as formatters from './util/formatters';
 import useBanana from './reducer';
 import Building from './components/Building';
+import Upgrade from './components/Upgrade';
 import './styles/Banana.css';
 
 const initialState = JSON.parse(localStorage.getItem('banana') || 'null');
@@ -18,6 +20,10 @@ function Banana() {
   const stateRef = React.useRef<Typer.State | null>(null);
   const [savedAt, setSavedAt] = React.useState(Date.now());
   const [ctrlHeld, setCtrlHeld] = React.useState(false);
+
+  const availableUpgrades = React.useMemo(() => {
+    return state.upgrades.filter(u => u.unlocked && !u.bought);
+  }, [state.upgrades]);
 
   React.useEffect(() => {
     if (Date.now() - savedAt < 10_000) return;
@@ -86,16 +92,60 @@ function Banana() {
       return false;
     }
     setCtrlHeld(direction === 'down');
-    const building = state.buildings.find(b => {
-      return e.key === b.keybind;
-    });
-    if (!building) return true;
-    buyBuilding(building.id);
-    return true;
+    if (direction === 'down') return false;
+    let keyIndex = Building.KEYBINDS.indexOf(e.key);
+    if (keyIndex !== -1) {
+      const building = state.buildings[keyIndex];
+      if (!building) return true;
+      buyBuilding(building.id);
+      return true;
+    }
+    keyIndex = Upgrade.KEYBINDS.indexOf(e.key);
+    if (keyIndex !== -1) {
+      const upgrade = availableUpgrades[keyIndex];
+      if (!upgrade) return false;
+      buyUpgrade(upgrade);
+      return true;
+    }
+    return false;
   }
 
   function buyBuilding(id: number) {
     dispatch({ type: 'buyBuilding', buildingId: id });
+  }
+
+  function buyUpgrade(upgrade: Banana.Upgrade) {
+    dispatch({ type: 'buyUpgrade', upgradeId: upgrade.id });
+  }
+
+  function renderRow(index: number) {
+    const order = ['top', 'home', 'bottom'];
+    const lengths = [10, 9, 7];
+    const start = sum(lengths.slice(0, index));
+    const end = sum(lengths.slice(0, index + 1));
+    const upgrades = availableUpgrades.slice(start, end);
+    return (
+      <div className={`${order[index]}-row`}>
+        {upgrades.map((upgrade, index) =>
+          <Upgrade
+            key={upgrade.id}
+            state={state}
+            upgrade={upgrade}
+            index={index}
+            ctrlHeld={ctrlHeld}
+            onBuy={buyUpgrade}
+          />
+        )}
+        {Upgrade.KEYBINDS
+          .slice(start + upgrades.length, end)
+          .map(key =>
+            <button className="Upgrade" disabled>
+              <h3>{key}</h3>
+            </button>
+          )
+        }
+      </div>
+    )
   }
 
   return (
@@ -109,15 +159,22 @@ function Banana() {
         onKeyPress={onKeyPress}
         restartOnContentChange={false}
       />
-      {state.buildings.map(building =>
-        <Building
-          key={building.id}
-          state={state}
-          building={building}
-          onBuy={buyBuilding}
-          ctrlHeld={ctrlHeld}
-        /> 
-      )}
+      <div className="keyboard">
+        <div className="number-row">
+          {state.buildings.map(building =>
+            <Building
+              key={building.id}
+              state={state}
+              building={building}
+              onBuy={buyBuilding}
+              ctrlHeld={ctrlHeld}
+            /> 
+          )}
+        </div>
+        {renderRow(0)}
+        {renderRow(1)}
+        {renderRow(2)}
+      </div>
     </div>
   )
 }

@@ -1,3 +1,36 @@
 .Banana, .Banana button {
   font-family: monospace;
 }
+
+.Banana .keyboard {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: column;
+}
+
+.Banana .number-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.Banana .top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 60px;
+}
+
+.Banana .home-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 90px;
+}
+
+.Banana .bottom-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  padding-left: 150px;
+}

@@ -15,6 +15,19 @@ interface Props {
 }
 function Upgrade({ state, upgrade, index, ctrlHeld, onBuy }: Props) {
   const keybind = KEYBINDS[index];
+  if (ctrlHeld) {
+    return (
+      <button
+        className="Upgrade key quick-shop"
+        disabled={state.bananas < upgrade.price} 
+        onClick={() => onBuy(upgrade)}
+      >
+        <h2>{keybind}</h2>
+        <h4>{upgrade.name}</h4>
+        <p>b-{formatters.price(upgrade.price)}</p>
+      </button>
+    );
+  }
   return (
     <button
       className="Upgrade key"
@@ -22,8 +35,7 @@ function Upgrade({ state, upgrade, index, ctrlHeld, onBuy }: Props) {
       onClick={() => onBuy(upgrade)}
     >
       <h2>{keybind}</h2>
-      <h4>{upgrade.name}</h4>
-      <p>b-{formatters.price(upgrade.price)}</p>
+      <h4>o</h4>
     </button>
   );
 }

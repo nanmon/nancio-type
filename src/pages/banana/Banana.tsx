@@ -187,6 +187,10 @@ function Banana() {
     )
   }
 
+  const kbClasses = ['keyboard', ctrlHeld && 'quick-shop']
+    .filter(c => c)
+    .join(' ');
+
   return (
     <div className="Banana">
       <p>bananas: {formatters.totalBananas(state.bananas)}</p>
@@ -198,7 +202,7 @@ function Banana() {
         onKeyPress={onKeyPress}
         restartOnContentChange={false}
       />
-      <div className="keyboard">
+      <div className={kbClasses}>
         {renderBuildingsRow()}
         {renderUpgradesRow(0)}
         {renderUpgradesRow(1)}

@@ -14,17 +14,29 @@ interface Props {
 
 function Building({ state, building, ctrlHeld, onBuy }: Props) {
   const keybind = KEYBINDS[building.id];
+  if (ctrlHeld) {
+    return (
+      <button
+        className="Building key quick-shop"
+        disabled={state.bananas < building.price} 
+        onClick={() => onBuy(building.id)}
+      >
+        <h2>{keybind}</h2>
+        <h4>{building.owned} {building.name}</h4>
+        <p>b-{formatters.price(building.price)}</p>
+        <p>bps+{formatters.bps(building.bps * state.bpsMultiplier)}</p>
+      </button>
+    );
+  }
   return (
     <button
-      className="Building key"
-      disabled={state.bananas < building.price} 
-      onClick={() => onBuy(building.id)}
-    >
-      <h2>{ctrlHeld ? keybind : building.owned}</h2>
-      <h4>{building.name}</h4>
-      <p>b-{formatters.price(building.price)}</p>
-      <p>bps+{formatters.bps(building.bps * state.bpsMultiplier)}</p>
-    </button>
+        className="Building key quick-shop"
+        disabled={state.bananas < building.price} 
+        onClick={() => onBuy(building.id)}
+      >
+        <h2>{keybind}</h2>
+        <h4>{building.owned}</h4>
+      </button>
   );
 }
 

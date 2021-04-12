@@ -1,23 +1,36 @@
+.Banana {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .Banana, .Banana button {
   font-family: monospace;
 }
 
 .Banana .keyboard {
+  height: 480px;
   margin-top: 60px;
   display: flex;
   flex-direction: column;
+  margin-left: -60px;
 }
 
 .Banana .keyboard .key {
   font-size: 0.9rem;
   background-color: #111;
   color: white;
-  width: 120px;
-  height: 120px;
+  width: 60px;
+  height: 60px;
 }
 
 .Banana .keyboard .key:disabled {
   color: gray;
+}
+
+.Banana .keyboard.quick-shop .key {
+  width: 120px;
+  height: 120px;
 }
 
 .Banana .keyboard .key * {
@@ -34,19 +47,31 @@
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  padding-left: 60px;
+  padding-left: 30px;
 }
 
 .Banana .home-row {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
-  padding-left: 90px;
+  padding-left: 45px;
 }
 
 .Banana .bottom-row {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  padding-left: 75px;
+}
+
+.Banana .keyboard.quick-shop .top-row {
+  padding-left: 60px;
+}
+
+.Banana .keyboard.quick-shop .home-row {
+  padding-left: 90px;
+}
+
+.Banana .keyboard.quick-shop .bottom-row {
   padding-left: 150px;
 }

@@ -24,7 +24,7 @@ function Upgrade({ state, upgrade, index, ctrlHeld, onBuy }: Props) {
     >
       <h2>{keybind}</h2>
       <h4>{upgrade.name}</h4>
-      <p>b-{formatters.sixDigits(upgrade.price)}</p>
+      <p>b-{formatters.price(upgrade.price)}</p>
     </button>
   );
 }

@@ -22,8 +22,8 @@ function Building({ state, building, ctrlHeld, onBuy }: Props) {
     >
       <h2>{ctrlHeld ? keybind : building.owned}</h2>
       <h4>{building.name}</h4>
-      <p>b-{formatters.sixDigits(building.price)}</p>
-      <p>bps+{formatters.sixDigits(building.bps)}</p>
+      <p>b-{formatters.price(building.price)}</p>
+      <p>bps+{formatters.bps(building.bps)}</p>
     </button>
   );
 }

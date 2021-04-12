@@ -150,8 +150,8 @@ function Banana() {
 
   return (
     <div className="Banana">
-      <p>bananas: {formatters.threeDecimals.format(state.bananas)}</p>
-      <p>bps: {formatters.threeDecimals.format(state.bps)} + {formatters.threeDecimals.format(wps * 5)}({formatters.wpm.format(wps * 60)} wpm)</p>
+      <p>bananas: {formatters.totalBananas(state.bananas)}</p>
+      <p>bps: {formatters.bps(state.bps)} + {formatters.bps(wps * 5 * state.bpt)}({formatters.wpm(wps * 60)} wpm)</p>
       <Typer
         typed={typed}
         content={content} 

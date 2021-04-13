@@ -1,4 +1,6 @@
+import React from 'react';
 import * as formatters from '../util/formatters';
+import Tooltip from './Tooltip';
 import '../styles/Upgrade.css';
 
 const KEYBINDS = [
@@ -14,18 +16,38 @@ interface Props {
   onBuy(upgrade: Banana.Upgrade): void;
 }
 function Upgrade({ state, upgrade, index, ctrlHeld, onBuy }: Props) {
+  const [tooltip, setTooltip] = React.useState<[number, number] | null>(null);
+
+  React.useEffect(() => {
+    setTooltip(null);
+  }, [ctrlHeld]);
+
+  function hover({ clientX, clientY }: React.MouseEvent) {
+    setTooltip([clientX, clientY])
+  }
+
   const keybind = KEYBINDS[index];
   if (ctrlHeld) {
     return (
-      <button
-        className="Upgrade key quick-shop"
-        disabled={state.bananas < upgrade.price} 
-        onClick={() => onBuy(upgrade)}
+      <div
+        className="Upgrade"
+        onMouseMove={hover}
+        onMouseEnter={hover}
+        onMouseLeave={() => setTooltip(null)}
       >
-        <h2>{keybind}</h2>
-        <h4>{upgrade.name}</h4>
-        <p>b-{formatters.price(upgrade.price)}</p>
-      </button>
+        <button 
+          className="key quick-shop" 
+          disabled={state.bananas < upgrade.price}
+          onClick={() => onBuy(upgrade)}
+        >
+          <h2>{keybind}</h2>
+          <h4>{upgrade.name}</h4>
+          <p>b-{formatters.price(upgrade.price)}</p>
+        </button>
+        {tooltip &&
+          <Tooltip state={state} upgrade={upgrade} position={tooltip}/>
+        }
+      </div>
     );
   }
   return (

@@ -1,0 +1,3 @@
+.Upgrade button:disabled {
+  pointer-events: none;
+}

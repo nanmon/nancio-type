@@ -16,8 +16,8 @@ function tick(
       lastTimestamp: action.timestamp
     }
   };
-  unlockBuildings(state);
-  unlockUpgrades(state);
+  unlockBuildings(newState);
+  unlockUpgrades(newState);
   return newState;
 }
 

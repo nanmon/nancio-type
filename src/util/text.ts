@@ -62,6 +62,7 @@ export const getLines = (
       if (typed) currentLine[1] += ' ' + typed;
     }
   });
+  if (currentLine.length > 0) lines.push(currentLine);
   return lines;
 }
 

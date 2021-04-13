@@ -31,6 +31,7 @@ export function Typer({
   }, [content, restartOnContentChange]);
 
   React.useEffect(() => {
+    if (!typed) return;
     dispatch({ type: 'merge', state: { typed }});
   }, [typed])
 

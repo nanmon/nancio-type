@@ -9,4 +9,6 @@ npm start
 - ignoredCharacters prop
 - ref.focus()
 - afk timeline item (add '' for each second without typing?)
-- useless efficiency and multiplier upgrades
+- banana:
+  - useless efficiency and multiplier upgrades
+  - make calculations on the fly (cache object if needed)

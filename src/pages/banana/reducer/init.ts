@@ -34,7 +34,7 @@ function init(
       // building(13, 'prism', 2.9e9, 2.1e15),
       // building(14, 'chancemaker', 21e9, 26e15),
       // building(15, 'fractal', 150e9, 310e15),
-      // building(16, 'jconsole', 1.1e12, 71e18),
+      // building(16, 'irl command', 1.1e12, 71e18),
       // building(17, 'idleverse', 8.3e12, 12e21)
     ],
     upgrades: [
@@ -95,7 +95,7 @@ function init(
       doubleEfficiencyUpgrade(48, 'rationale stuffed', 700e18, 5, 250),
       // temple
       doubleEfficiencyUpgrade(49, 'golden idols', 200e6, 6, 1),
-      doubleEfficiencyUpgrade(50, 'sacrifices', 1e9, 6, 1),
+      doubleEfficiencyUpgrade(50, 'sacrifices', 1e9, 6, 5),
       doubleEfficiencyUpgrade(51, 'blessed fingers', 10e9, 6, 25),
       doubleEfficiencyUpgrade(52, 'monkegod festival', 1e12, 6, 50),
       doubleEfficiencyUpgrade(53, 'enlarged pantheon', 100e12, 6, 100),

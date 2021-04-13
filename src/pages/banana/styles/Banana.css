@@ -10,10 +10,10 @@
 
 .Banana .keyboard {
   height: 480px;
-  margin-top: 60px;
   display: flex;
   flex-direction: column;
   margin-left: -60px;
+  justify-content: center;
 }
 
 .Banana .keyboard .key {

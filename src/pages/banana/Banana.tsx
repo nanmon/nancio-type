@@ -106,7 +106,7 @@ function Banana() {
       setCtrlHeld(false);
       return false;
     }
-    setCtrlHeld(direction === 'down');
+    setCtrlHeld(direction === 'down' || e.key !== 'Control');
     if (direction === 'down') return false;
     let keyIndex = Building.KEYBINDS.indexOf(e.key);
     if (keyIndex !== -1) {

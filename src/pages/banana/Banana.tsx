@@ -9,6 +9,7 @@ import useBanana from './reducer';
 import Building from './components/Building';
 import Upgrade from './components/Upgrade';
 import './styles/Banana.css';
+import { fullBps, fullBpt } from './util/logic';
 
 const initialState = JSON.parse(localStorage.getItem('banana') || 'null');
 
@@ -32,12 +33,12 @@ function Banana() {
       .sort((a, b) => a.price - b.price);
   }, [state.upgrades]);
   const shownBps = React.useMemo(() => {
-    return state.bps * state.bpsMultiplier;
+    return fullBps(state);
   }, [state]);
 
   const shownBpt = React.useMemo(() => {
-    return wps * 5 * (state.bpt + shownBps * state.typerCpsPercent / 100);
-  }, [wps, state, shownBps]);
+    return wps * 5 * fullBpt(state);
+  }, [wps, state]);
 
 
   React.useEffect(() => {

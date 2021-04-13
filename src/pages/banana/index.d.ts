@@ -2,31 +2,28 @@ declare namespace Banana {
   interface State {
     bananas: number;
     totalBananas: number;
-    bps: number;
     bpsMultiplier: number;
-    bpt: number;
-    typerGain: number;
-    typerCpsPercent: number;
-    typerCount: number;
-    typerTotalBananas: number;
+    typer: Typer;
     buildings: Building[];
     upgrades: Upgrade[];
     config: Config;
     tech: Tech
   }
 
-  // interface Typer {
-  //   bpt: number;
-  //   gain: number;
-  //   cpsPercent: number;
-  //   count: number;
-  //   totalBananas: number;
-  // }
+  interface Typer {
+    bpt: number;
+    multiplier: number;
+    gain: number;
+    cpsPercent: number;
+    count: number;
+    totalBananas: number;
+  }
 
   interface Building {
     id: number;
     name: string;
-    bps: number;
+    baseBps: number;
+    multiplier: number;
     price: number;
     owned: number;
     unlocked: boolean;

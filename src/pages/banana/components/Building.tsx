@@ -1,5 +1,6 @@
 import * as formatters from '../util/formatters';
 import '../styles/Building.css';
+import { buildingBpsPerOwned } from '../util/logic';
 
 const KEYBINDS = [
   'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
@@ -24,7 +25,7 @@ function Building({ state, building, ctrlHeld, onBuy }: Props) {
         <h2>{keybind}</h2>
         <h4>{building.owned} {building.name}</h4>
         <p>b-{formatters.price(building.price)}</p>
-        <p>bps+{formatters.bps(building.bps * state.bpsMultiplier)}</p>
+        <p>bps+{formatters.bps(buildingBpsPerOwned(state, building))}</p>
       </button>
     );
   }

@@ -10,13 +10,15 @@ function init(
   return {
     bananas: 0,
     totalBananas: 0,
-    bps: 0,
     bpsMultiplier: 1,
-    bpt: 1,
-    typerGain: 0,
-    typerCpsPercent: 0,
-    typerCount: 0,
-    typerTotalBananas: 0,
+    typer: {
+      bpt: 1,
+      multiplier: 1,
+      totalBananas: 0,
+      gain: 0,
+      cpsPercent: 0,
+      count: 0
+    },
     buildings: [
       building(0, 'typewriter', 0.1, 15), 
       building(1, 'monke', 1, 100),
@@ -179,13 +181,14 @@ export default init;
 function building(
   id: number,
   name: string,
-  bps: number,
+  baseBps: number,
   price: number,
 ): Banana.Building {
   return {
     id,
     name,
-    bps,
+    baseBps,
+    multiplier: 1,
     price,
     owned: 0,
     unlocked: false,

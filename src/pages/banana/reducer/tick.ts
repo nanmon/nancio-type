@@ -1,9 +1,11 @@
+import { fullBps } from "../util/logic";
+
 function tick(
   state: Banana.State,
   action: Banana.Actions.Tick
 ): Banana.State {
   const dt = action.timestamp - state.tech.lastTimestamp;
-  const made = state.bps * state.bpsMultiplier * dt / 1000;
+  const made = fullBps(state) * dt / 1000;
   const bananas = state.bananas + made;
   const newState = {
     ...state,

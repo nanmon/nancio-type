@@ -207,6 +207,9 @@ function Banana() {
         {renderUpgradesRow(0)}
         {renderUpgradesRow(1)}
       </div>
+      {!ctrlHeld && availableBuildings.length > 0 && 
+        <p className="shop-sign">hold ctrl to access shop</p>
+      }
     </div>
   )
 }

@@ -75,3 +75,8 @@
 .Banana .keyboard.quick-shop .bottom-row {
   padding-left: 150px;
 }
+
+.Banana .shop-sign {
+  position: fixed;
+  bottom: 0;
+}

@@ -89,7 +89,7 @@ export function unfixedErrors(state: Pick<Typer.State, 'typed' | 'content'>) {
     typedWords,
     getWords(state.content.text),
   ).forEach(([typedWord, word], index) => {
-    if (!word) return; // should not happen
+    if (!word || !typedWord) return; // should not happen
     if (index < typedWords.length -1 && word.length > typedWord!.length) {
       errors++; // all missings as one error
     }

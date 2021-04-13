@@ -16,6 +16,7 @@ function Stats() {
   const duration = (last(state.timeline)!.timestamp - startTime) / 1000;
 
   const chartData = React.useMemo(() => {
+    debugger;
     const data = Array
       .from({ length: Math.round(duration)  })
       .map((_, index) => {
@@ -50,7 +51,7 @@ function Stats() {
         <h2>{Math.round(acc)}%</h2>
       </div>
       <div className="chart">
-        <ComposedChart width={config.width} height={300} data={chartData}>
+        <ComposedChart width={config.width * 15} height={300} data={chartData}>
           <Line type="monotone" yAxisId="wpm" dataKey="raw" stroke="darkred" fill="darkred"/>
           <Line type="monotone" yAxisId="wpm" dataKey="wpm" stroke="red" fill="red"/>
           <Scatter type="monotone" yAxisId="errors" dataKey="errors" stroke="black" fill="gray"/>

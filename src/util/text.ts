@@ -54,7 +54,10 @@ export const getLines = (
     if (typed && typed.length > word.length) wlength = typed.length;
     if (currentLength + 1 + wlength > width) {
       currentLength = wlength;
-      lines.push(currentLine);
+      lines.push([
+        currentLine[0].trim(),
+        currentLine[1].trim()
+      ]);
       currentLine = [word, typed || '']
     } else {
       currentLength += 1 + wlength;
